@@ -10,24 +10,28 @@ class ImagePtr:
     """
 
     # static class variables
-    _lst = [] # contains list of object ImagePtr
+    _lst: List[ImagePtr] = []
 
     def __init__(self, width, height, location):
-        self.width = width
-        self.height = height
-        self.location = []
+        self.width: int = width
+        self.height: int = height
+        self.location: str = []
         self.location.extend(location)
         self.num = 1
 
-    def get_width(self):
+    def get_width(self) -> int:
         """ return the width of image : int """
         return self.width
 
-    def get_height(self):
+    def get_height(self) -> int:
         """ return the height of image : int """
         return self.height
 
-    def add_list(self, location):
+    def get_location(self) -> str:
+        """ return the image location """
+        return self.location
+
+    def add_list(self, location: str):
         """
         add location into location[] variable
         location : string
@@ -64,8 +68,8 @@ class ImagePtr:
                 # Otherwise create a new ImagePtr object on the list
                 else:
                     ImagePtr._append(file)
-            except Exception:
-                pass
+            except IOError:
+                print('Unable to read image file(s)')
 
     @staticmethod
     def _append(image):
@@ -74,3 +78,22 @@ class ImagePtr:
         image : string
         """
         ImagePtr._lst.extend(ImagePtr(image.get_width, image.get_height, image))
+
+    @staticmethod
+    def list():
+        """
+        Print information about sorted images (by width and height)
+        Return False if there's ImagePtr._lst is empty
+        """
+        if not ImagePtr._lst:
+            print("No image is being sorted into folder.")
+            return False
+
+        # print all sorted images and its related information
+        for _sorted in ImagePtr._lst:
+            # print sorted image size and all its related location
+            print('Image Size: {}x{}'.format(_sorted.width, _sorted.height))
+            if not _sorted.location:
+                for loc in _sorted.location:
+                    print('| ', loc)
+        return True
