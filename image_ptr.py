@@ -1,6 +1,7 @@
 """
 Sorting all images files by height and width
 """
+from typing import List # needed for Type aliases for 'List' data type
 from PIL import Image
 
 class ImagePtr:
@@ -15,9 +16,8 @@ class ImagePtr:
     def __init__(self, width, height, location):
         self.width: int = width
         self.height: int = height
-        self.location: str = []
+        self.location: List[str] = []
         self.location.extend(location)
-        self.num = 1
 
     def get_width(self) -> int:
         """ return the width of image : int """
@@ -27,8 +27,8 @@ class ImagePtr:
         """ return the height of image : int """
         return self.height
 
-    def get_location(self) -> str:
-        """ return the image location """
+    def get_location(self) -> List[str]:
+        """ return list of image location who shares the same height and weight """
         return self.location
 
     def add_list(self, location: str):
@@ -38,7 +38,6 @@ class ImagePtr:
         return none
         """
         self.location.extend(location)
-        self.num += 1
 
     @staticmethod
     def append(files):
