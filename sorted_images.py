@@ -1,7 +1,4 @@
 """
-After obtaining the sorted images location, this will output as in a directory
-according to their height and width.
-
 This module will only contain functions that manipulates class ImagePtr
 """
 from typing import List # needed for Type aliases for 'List' data type
