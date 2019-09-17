@@ -1,7 +1,7 @@
 """
 This class contains all images who has the same height and width.
 """
-from typing import List # needed for Type aliases for 'List' data type
+from typing import List, Tuple # needed for Type aliases for 'List' data type
 from PIL import Image
 
 class ImagePtr:
@@ -28,14 +28,36 @@ class ImagePtr:
         """ return list of image path who shares the same height and weight """
         return self.path
 
-    def add_to_path(self, file: str) -> bool:
+    def add_to_path(self, img: str) -> None:
         """
-        add image file path into path[] variable
+        Add image file path into path[] variable
         if it's image and has same width and height as in this class
-        return none
+
+        Return image width and height
+        else return empty tuple
+        """
+        self.path.extend(img)
+
+    def is_same(self, tup: Tuple) -> bool:
+        """
+        recive that tuple that contains 2 value (width: int, height: int)
+
+        return true if it's the same as object, false otherwise
+        """
+        if tup[0] == self.width and tup[1] == self.height:
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def is_image(file: str) -> Tuple:
+        """
+        verify whether it's image or not
+
+        Return Tuple (img.width, img.height) if yes
+        Return emtpy Tuple if no
         """
         with Image.open(file) as img:
-            if img.size == (self.width, self.height):
-                self.path.extend(file)
-                return True
-        return False
+            if img.verify:
+                return img.size
+        return ()

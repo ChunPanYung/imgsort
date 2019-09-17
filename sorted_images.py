@@ -1,61 +1,53 @@
 """
 This module will only contain functions that manipulates class ImagePtr
+in linked list.
 """
+import os
 from typing import List # needed for Type aliases for 'List' data type
 from PIL import Image
-from imgsort import image_ptr as ImagePtr
+from imgsort.image_ptr import ImagePtr
 
-def append(files):
+def sort(files) -> List[ImagePtr]:
     """
-    append image files into static class variable _lst
-    if they are image files
-    files : list
+    sort images by height and width
+
+    Return: lst: List[ImagePtr]
     """
-    # check whether each file is img file,
-    # then get the width and height
-    # put them in a list
+
+    # Contains list of object ImagePtr, with each object contains images
+    # who has the same width and height
+    lst: List[ImagePtr] = []
+
+    # Cycle through each file
     for file in files:
-        img = Image.open(file)
-        try: # verify whether it's image (loose verifcation)
-            img.verify()
-            # check if it's ImagePtr already exist
-            length = len(ImagePtr._lst)
-            if length != 0:
-                # check each ImagePtr to see whether it matches the width and height
-                for node in ImagePtr._lst:
-                    # if it's the same width and height
-                    if img.size == (node.get_width, node.get_height):
-                        node.add_list(file)
-                    # Otherwise create a new ImagePtr object on the list
-                    else:
-                        ImagePtr._append(file)
-            # Otherwise create a new ImagePtr object on the list
-            else:
-                ImagePtr._append(file)
-        except IOError:
-            print('Unable to read image file(s)')
+        # Check to see whether it can grab img width and height
+        img_size = ImagePtr.is_image(file)
 
-def _append(image):
-    """
-    append the image into the static class variable _lst as a new node
-    image : string
-    """
-    ImagePtr._lst.extend(ImagePtr(image.get_width, image.get_height, image))
+        if not img_size: # If it can, do the following:
+            for node in lst: # Cycle through each node in list
+                file = os.path.abspath(file) # Get absolute file path
+                if node.is_same(img_size): # Add img path into node if same size
+                    node.add_to_path(file)
+                else: # otherwise create node that save all img with same size
+                    lst.append(ImagePtr(img_size[0], img_size[1], file))
 
-def list_all():
+    # return linked list after sorting through all files
+    return lst
+
+def dry_run(lst: List[ImagePtr]) -> bool:
     """
     Print information about sorted images (by width and height)
     Return False if there's ImagePtr._lst is empty
     """
-    if not ImagePtr._lst:
+    if not lst:
         print("No image is being sorted into folder.")
         return False
 
     # print all sorted images and its related information
-    for _sorted in ImagePtr._lst:
+    for node in lst:
         # print sorted image size and all its related location
-        print('Image Size: {}x{}'.format(_sorted.width, _sorted.height))
-        if not _sorted.location:
-            for loc in _sorted.location:
-                print('| ', loc)
+        print('Image Size: {}x{}'.format(node.width, node.height))
+        # For every object, print all strings in List: node.path
+        for location in node.path:
+            print('| ', location)
     return True
