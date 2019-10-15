@@ -7,7 +7,7 @@ from typing import List # needed for Type aliases for 'List' data type
 from PIL import Image
 from imgsort.image_ptr import ImagePtr
 
-def dry_run(files) -> None:
+def dry_run(files) -> List[ImagePtr]:
     """
     sort images by height and width
 
@@ -32,9 +32,11 @@ def dry_run(files) -> None:
                     lst.append(ImagePtr(img_size[0], img_size[1], file))
 
     print_all(lst)
+    return lst
 
 def print_all(lst: List[ImagePtr]) -> bool:
     """
+    Private Function
     Print information about sorted images (by width and height)
     Return False if there's ImagePtr._lst is empty
     """

@@ -38,5 +38,4 @@ def main(argv: List[str]):
     SRC = os.path.abspath(args.SRC)
     DEST = os.path.abspath(args.DEST)
 
-    lst: List = sorted_images.sort(SRC) #
-    sorted_images.sorted(lst) # dry run
+    lst: List = sorted_images.dry_run(SRC)
