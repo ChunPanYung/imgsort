@@ -8,7 +8,7 @@ import os
 import argparse
 from typing import List
 from PIL import Image
-from imgsort import sorted_images
+from sorted_images import dry_run
 
 def main(argv: List[str]):
     """
@@ -38,4 +38,4 @@ def main(argv: List[str]):
     SRC = os.path.abspath(args.SRC)
     DEST = os.path.abspath(args.DEST)
 
-    lst: List = sorted_images.dry_run(SRC)
+    lst: List = dry_run(SRC)

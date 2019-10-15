@@ -5,7 +5,7 @@ in linked list.
 import os
 from typing import List # needed for Type aliases for 'List' data type
 from PIL import Image
-from imgsort.image_ptr import ImagePtr
+from image_ptr import ImagePtr
 
 def dry_run(files) -> List[ImagePtr]:
     """
