@@ -46,8 +46,8 @@ class ImagePtr:
         """
         if tup[0] == self.width and tup[1] == self.height:
             return True
-        else:
-            return False
+
+        return False
 
     @staticmethod
     def is_image(file: str) -> Tuple:

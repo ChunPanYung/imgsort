@@ -12,6 +12,7 @@ from typing import List
 from PIL import Image
 from sorted_images import dry_run
 
+
 def main():
     """
     Parse all command line options
@@ -43,6 +44,7 @@ def main():
     DEST = os.path.abspath(args.DEST)
 
     lst: List = dry_run(SRC)
+
 
 # execute main() function
 if __name__ == '__main__':

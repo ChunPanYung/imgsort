@@ -7,7 +7,7 @@ from typing import List # needed for Type aliases for 'List' data type
 from PIL import Image
 from image_ptr import ImagePtr
 
-def dry_run(files) -> List[ImagePtr]:
+def dry_run(directory) -> List[ImagePtr]:
     """
     sort images by height and width
 
@@ -18,6 +18,10 @@ def dry_run(files) -> List[ImagePtr]:
     # who has the same width and height
     lst: List[ImagePtr] = []
 
+    # list all files in directory, get its absolute path
+    files = [ f for f in os.listdir(directory)
+              if os.path.isfile(os.path.abspath(f)) ]
+
     # Cycle through each file
     for file in files:
         # Check to see whether it can grab img width and height
@@ -25,7 +29,6 @@ def dry_run(files) -> List[ImagePtr]:
 
         if not img_size: # If it can, do the following:
             for node in lst: # Cycle through each node in list
-                file = os.path.abspath(file) # Get absolute file path
                 if node.is_same(img_size): # Add img path into node if same size
                     node.add_to_path(file)
                 else: # otherwise create node that save all img with same size
