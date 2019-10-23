@@ -9,12 +9,12 @@ class ImagePtr:
     This class contains all images who has the same height and width.
     """
 
-    def __init__(self, width, height, file):
+    def __init__(self, width, height, img):
         self.width: int = width
         self.height: int = height
         # contains all images path who share the same width and height
         self.path: List[str] = []
-        self.path.extend(file)
+        self.path[:0] = [img]
 
     def get_width(self) -> int:
         """ return the width of image : int """
@@ -36,7 +36,7 @@ class ImagePtr:
         Return image width and height
         else return empty tuple
         """
-        self.path.extend(img)
+        self.path[:0] = [img]
 
     def is_same(self, tup: Tuple) -> bool:
         """

@@ -3,7 +3,8 @@ This module will only contain functions that manipulates class ImagePtr
 in linked list.
 """
 import os
-from typing import List # needed for Type aliases for 'List' data type
+from typing import List
+from typing import Tuple
 from PIL import Image
 from image_ptr import ImagePtr
 
@@ -19,20 +20,24 @@ def dry_run(directory) -> List[ImagePtr]:
     lst: List[ImagePtr] = []
 
     # list all files in directory, get its absolute path
-    files = [ f for f in os.listdir(directory)
-              if os.path.isfile(os.path.abspath(f)) ]
+    files: List[str] = [f for f in os.listdir(directory)
+                        if os.path.isfile(os.path.join(directory, f))]
 
     # Cycle through each file
     for file in files:
+        file = os.path.join(directory, file) # get the full path
         # Check to see whether it can grab img width and height
-        img_size = ImagePtr.is_image(file)
+        img_size: Tuple = ImagePtr.is_image(file)
 
-        if not img_size: # If it can, do the following:
+        if img_size: # If it can, do the following:
+            added: bool = False
             for node in lst: # Cycle through each node in list
                 if node.is_same(img_size): # Add img path into node if same size
                     node.add_to_path(file)
-                else: # otherwise create node that save all img with same size
-                    lst.append(ImagePtr(img_size[0], img_size[1], file))
+                    added = True
+            # Create new node if it's not added to the current nodes
+            if not added:
+                lst.append(ImagePtr(img_size[0], img_size[1], file))
 
     print_all(lst)
     return lst
