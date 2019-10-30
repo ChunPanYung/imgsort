@@ -48,16 +48,3 @@ class ImagePtr:
             return True
 
         return False
-
-    @staticmethod
-    def is_image(file: str) -> Tuple:
-        """
-        verify whether it's image or not
-
-        Return Tuple (img.width, img.height) if yes
-        Return emtpy Tuple if no
-        """
-        with Image.open(file) as img:
-            if img.verify:
-                return img.size
-        return ()

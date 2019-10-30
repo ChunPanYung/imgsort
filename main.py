@@ -10,7 +10,7 @@ import os
 import argparse
 from typing import List
 from PIL import Image
-from sorted_images import dry_run
+import sort_images
 
 
 def main():
@@ -19,17 +19,18 @@ def main():
     """
     parser = argparse.ArgumentParser()
     # Add positional arguments
-    parser.add_argument('SRC', help='Directory that contains unsorted images')
+    parser.add_argument('SRC', nargs='+',
+                        help='Directory that contains unsorted images')
     # Optional positional arguments
-    parser.add_argument('DEST', nargs='?', default=os.getcwd(),
-                        help='''Destination directory that will contain sorted images.
-                                If not provided, use current directory.''')
+
     # Add optional arguments
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='Output all sorted images and error')
 
     parser.add_argument('-d', '--dry-run', action='store_true',
                         help='Simulate the image sorting without actual action.',)
+    parser.add_argument('-r', '--recursive', action='store_true',
+                        help='Get all images from subsequent directories')
 
     # Get all the arguments
     args = parser.parse_args()
@@ -39,11 +40,19 @@ def main():
         print("Please indicate both SRC directory.")
         sys.exit()
 
-    # Get absolute path for following variables
-    SRC = os.path.abspath(args.SRC)
-    DEST = os.path.abspath(args.DEST)
+    lst: List[str] = []
 
-    lst: List = dry_run(SRC)
+    # get all subsequent files depending on 'recursive' options
+    lst = sort_images.list_img(args.recursive, args.SRC)
+
+
+
+    # process according to optional arguments
+    #lst = list_img(args.recursive, args.SRC)
+
+
+
+    #lst: List = dry_run(SRC)
 
 
 # execute main() function

@@ -3,10 +3,44 @@ This module will only contain functions that manipulates class ImagePtr
 in linked list.
 """
 import os
-from typing import List
-from typing import Tuple
+from typing import List, Tuple
 from PIL import Image
 from image_ptr import ImagePtr
+
+def list_img(recursive: bool, *files: str) -> List[str]:
+    """
+    Return a list of all images file
+    """
+    lst: List[str] = []
+    # list all files in directory, get its absolute path
+    for file in files[0]:
+        if _is_image(file): # add into lst if it's image
+            lst[:0] = [os.path.abspath(file)]
+        elif recursive and os.path.isdir(file):
+            lst[:0] = _list_img(recursive, os.listdir(file))
+
+    return lst
+
+def _list_img(recursive: bool, files: List[str]) -> List[str]:
+    """
+    Return a list of all images file
+    """
+
+
+    lst: List[str] = []
+    # list all files in directory, get its absolute path
+    for file in files:
+        file = os.path.abspath(file)
+        if _is_image(file): # add into lst if it's image
+            lst[:0] = [file]
+        elif recursive and os.path.isdir(file):
+            lst[:0] = _list_img(recursive, os.listdir(file))
+
+
+    return lst
+
+
+
 
 def dry_run(directory) -> List[ImagePtr]:
     """
@@ -27,7 +61,7 @@ def dry_run(directory) -> List[ImagePtr]:
     for file in files:
         file = os.path.join(directory, file) # get the full path
         # Check to see whether it can grab img width and height
-        img_size: Tuple = ImagePtr.is_image(file)
+        img_size: Tuple = _is_image(file)
 
         if img_size: # If it can, do the following:
             added: bool = False
@@ -60,3 +94,17 @@ def print_all(lst: List[ImagePtr]) -> bool:
         for location in node.path:
             print('| ', location)
     return True
+
+# private function
+def _is_image(file: str) -> Tuple:
+    """
+    verify whether it's image or not
+
+    Return Tuple (img.width, img.height) if yes
+    Return emtpy Tuple if no
+    """
+    try:
+        with Image.open(file) as img:
+            return img.size
+    except IOError:
+        return ()
