@@ -7,35 +7,19 @@ from typing import List, Tuple
 from PIL import Image
 from image_ptr import ImagePtr
 
-def list_img(recursive: bool, *files: str) -> List[str]:
+def list_img(recursive: bool, files: List[str]) -> List[str]:
     """
     Return a list of all images file
     """
-    lst: List[str] = []
-    # list all files in directory, get its absolute path
-    for file in files[0]:
-        if _is_image(file): # add into lst if it's image
-            lst[:0] = [os.path.abspath(file)]
-        elif recursive and os.path.isdir(file):
-            lst[:0] = _list_img(recursive, os.listdir(file))
-
-    return lst
-
-def _list_img(recursive: bool, files: List[str]) -> List[str]:
-    """
-    Return a list of all images file
-    """
-
-
     lst: List[str] = []
     # list all files in directory, get its absolute path
     for file in files:
-        file = os.path.abspath(file)
         if _is_image(file): # add into lst if it's image
             lst[:0] = [file]
         elif recursive and os.path.isdir(file):
-            lst[:0] = _list_img(recursive, os.listdir(file))
+            lst[:0] = list_img(recursive, os.listdir(file))
 
+    print(lst)
 
     return lst
 
