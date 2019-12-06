@@ -20,13 +20,13 @@ def main():
     parser = argparse.ArgumentParser()
     # Add positional arguments
     parser.add_argument('SRC', nargs='+',
-                        help='Image file(s)')
+                        help='image file(s)')
     parser.add_argument('DEST',
-                        help='Destination folder for sorted images')
+                        help='destination folder for sorted images')
 
     # Add optional arguments
     parser.add_argument('-r', '--recursive', action='store_true',
-                        help='Get all images from subsequent directories')
+                        help='get all images from subsequent directories')
 
     # Get all the arguments
     args = parser.parse_args()
