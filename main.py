@@ -45,6 +45,7 @@ def main():
     # get all subsequent files depending on 'recursive' options
     lst = sort_images.list_img(args.recursive, args.SRC)
 
+    print(lst)
 
 
     # process according to optional arguments
