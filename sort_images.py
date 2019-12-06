@@ -17,9 +17,9 @@ def list_img(recursive: bool, files: List[str]) -> List[str]:
         if _is_image(file): # add into lst if it's image
             lst[:0] = [file]
         elif recursive and os.path.isdir(file):
-            base_path: str = os.path.split(file)[0] # get the base path
-            # list all files in subdirectory, than join it with base_path
-            lst_files: List[str] = [os.path.join(base_path, f) for f in os.listdir(file)]
+            # join the directory path with file name, then put it in list
+            lst_files: List[str] = [os.path.join(file, file_name)
+                                    for file_name in os.listdir(file)]
             lst[:0] = list_img(recursive, lst_files)
 
     return lst

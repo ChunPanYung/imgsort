@@ -20,25 +20,17 @@ def main():
     parser = argparse.ArgumentParser()
     # Add positional arguments
     parser.add_argument('SRC', nargs='+',
-                        help='Directory that contains unsorted images')
-    # Optional positional arguments
+                        help='Image file(s)')
+    parser.add_argument('DEST',
+                        help='Destination folder for sorted images')
 
     # Add optional arguments
-    parser.add_argument('-v', '--verbose', action='store_true',
-                        help='Output all sorted images and error')
-
-    parser.add_argument('-d', '--dry-run', action='store_true',
-                        help='Simulate the image sorting without actual action.',)
     parser.add_argument('-r', '--recursive', action='store_true',
                         help='Get all images from subsequent directories')
 
     # Get all the arguments
     args = parser.parse_args()
 
-    # Early exit if there's no SRC
-    if not args.SRC:
-        print("Please indicate both SRC directory.")
-        sys.exit()
 
     lst: List[str] = []
 
@@ -46,14 +38,6 @@ def main():
     lst = sort_images.list_img(args.recursive, args.SRC)
 
     print(lst)
-
-
-    # process according to optional arguments
-    #lst = list_img(args.recursive, args.SRC)
-
-
-
-    #lst: List = dry_run(SRC)
 
 
 # execute main() function
