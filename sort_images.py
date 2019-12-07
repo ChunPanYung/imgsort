@@ -7,7 +7,6 @@ import shutil
 from typing import List, Tuple
 from pathlib import Path
 from PIL import Image
-import numpy
 
 def move_img(files: List[str], destination: str, recursive: bool) -> bool:
     """
@@ -19,7 +18,8 @@ def move_img(files: List[str], destination: str, recursive: bool) -> bool:
     for file in files:
         # get the image width and size
         size: Tuple[int, int] = _is_image(file)
-        if size != (0, 0): # sort to destination if it's image
+        # sort to destination if it's image
+        if size != (0, 0):
             # Create new directory if not exist
             # directory name is all image with the same size
             new_directory: str = os.path.join(destination,
