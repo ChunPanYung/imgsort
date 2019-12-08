@@ -3,12 +3,14 @@ This module will only contain functions that manipulates class ImagePtr
 in linked list.
 """
 import os
+import sys
 import shutil
 from typing import List, Tuple
 from pathlib import Path
 from PIL import Image
 
-def move_img(files: List[str], destination: str, recursive: bool) -> bool:
+def sort_img(files: List[str], destination: str, recursive: bool,
+             copy: bool) -> bool:
     """
     sort all images to the destination directory
     """
@@ -25,16 +27,24 @@ def move_img(files: List[str], destination: str, recursive: bool) -> bool:
             new_directory: str = os.path.join(destination,
                                               str(size[0]) + 'x' + str(size[1]))
             Path(new_directory).mkdir(parents=True, exist_ok=True)
-            # Move images to new directory
-            shutil.move(file, new_directory)
+            # Move or copy images to new directory
+            # output error if file with same name exists
+            try:
+                if copy:
+                    shutil.copy(file, new_directory)
+                else:
+                    shutil.move(file, new_directory)
+            except shutil.Error as err:
+                sys.stderr.write('{}\n'.format(err))
+
         # If file is directory and recursive is True
         elif recursive and os.path.isdir(file):
             # recursively calling its own function with complete file path
             lst_files: List[str] = [os.path.join(file, file_name)
                                     for file_name in os.listdir(file)]
-            move_img(lst_files, destination, recursive)
+            sort_img(lst_files, destination, recursive, copy)
         else:
-            print('{}: is not image'.format(file))
+            sys.stderr.write('{}: is not image'.format(file))
 
 
     return True

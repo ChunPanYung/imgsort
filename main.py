@@ -23,13 +23,15 @@ def main():
     # Add optional arguments
     parser.add_argument('-r', '--recursive', action='store_true',
                         help='get all images from subsequent directories')
+    parser.add_argument('-c', '--copy', action='store_true',
+                        help='copy instead of move image files')
 
     # Get all the arguments
     args = parser.parse_args()
 
 
     # get all subsequent files depending on 'recursive' options
-    sort_images.move_img(args.SRC, args.DEST, args.recursive)
+    sort_images.sort_img(args.SRC, args.DEST, args.recursive, args.copy)
 
 
 # execute main() function
