@@ -15,7 +15,7 @@ def sort_img(files: List[str], destination: str, recursive: bool,
     sort all images to the destination directory
     """
     # Create destination directory if not exists
-    Path(destination).mkdir(parents=True, exist_ok=True)
+    _create_dir(destination)
 
     for file in files:
         # get the image width and size
@@ -26,7 +26,7 @@ def sort_img(files: List[str], destination: str, recursive: bool,
             # directory name is all image with the same size
             new_directory: str = os.path.join(destination,
                                               str(size[0]) + 'x' + str(size[1]))
-            Path(new_directory).mkdir(parents=True, exist_ok=True)
+            _create_dir(new_directory)
             # Move or copy images to new directory
             # output error if file with same name exists
             try:
@@ -34,8 +34,8 @@ def sort_img(files: List[str], destination: str, recursive: bool,
                     shutil.copy(file, new_directory)
                 else:
                     shutil.move(file, new_directory)
-            except shutil.Error as err:
-                sys.stderr.write('{}\n'.format(err))
+            except shutil.Error as error:
+                sys.stderr.write('{}\n'.format(error))
 
         # If file is directory and recursive is True
         elif recursive and os.path.isdir(file):
@@ -63,3 +63,13 @@ def _is_image(file: str) -> Tuple[int, int]:
             return img.size
     except IOError:
         return (0, 0)
+
+
+def _create_dir(directory: str) -> bool:
+    try:
+        Path(directory).mkdir(parents=True, exist_ok=True)
+    except FileExistsError as error:
+        sys.exit(error)
+
+    return True
+
