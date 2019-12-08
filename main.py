@@ -25,13 +25,21 @@ def main():
                         help='get all images from subsequent directories')
     parser.add_argument('-c', '--copy', action='store_true',
                         help='copy instead of move image files')
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='print detail information')
 
     # Get all the arguments
     args = parser.parse_args()
 
+    # Create destination directory if not exists
+    sort_images.create_dir(args.DEST)
+    if args.verbose:
+        print('{} is created.'.format(args.DEST))
+
 
     # get all subsequent files depending on 'recursive' options
-    sort_images.sort_img(args.SRC, args.DEST, args.recursive, args.copy)
+    sort_images.sort_img(args.SRC, args.DEST, args.recursive, args.copy,
+                         args.verbose)
 
 
 # execute main() function

@@ -10,12 +10,10 @@ from pathlib import Path
 from PIL import Image
 
 def sort_img(files: List[str], destination: str, recursive: bool,
-             copy: bool) -> bool:
+             copy: bool, verbose: bool) -> bool:
     """
     sort all images to the destination directory
     """
-    # Create destination directory if not exists
-    _create_dir(destination)
 
     for file in files:
         # get the image width and size
@@ -26,14 +24,18 @@ def sort_img(files: List[str], destination: str, recursive: bool,
             # directory name is all image with the same size
             new_directory: str = os.path.join(destination,
                                               str(size[0]) + 'x' + str(size[1]))
-            _create_dir(new_directory)
+            create_dir(new_directory)
             # Move or copy images to new directory
             # output error if file with same name exists
             try:
                 if copy:
                     shutil.copy(file, new_directory)
+                    if verbose:
+                        print('COPY: "{}"\nTO:   "{}"'.format(file, new_directory))
                 else:
                     shutil.move(file, new_directory)
+                    if verbose:
+                        print('MOVE: "{}"\nTO:   "{}"'.format(file, new_directory))
             except shutil.Error as error:
                 sys.stderr.write('{}\n'.format(error))
 
@@ -42,10 +44,24 @@ def sort_img(files: List[str], destination: str, recursive: bool,
             # recursively calling its own function with complete file path
             lst_files: List[str] = [os.path.join(file, file_name)
                                     for file_name in os.listdir(file)]
-            sort_img(lst_files, destination, recursive, copy)
+            sort_img(lst_files, destination, recursive, copy, verbose)
         else:
-            sys.stderr.write('{}: is not image'.format(file))
+            sys.stderr.write('{}: is not image\n'.format(file))
 
+
+    return True
+
+
+def create_dir(directory: str) -> bool:
+    """
+        Create from directory:str
+        It will create parent directory if it doesn't exist.
+        It won't throw Exception if directory already exists.
+    """
+    try:
+        Path(directory).mkdir(parents=True, exist_ok=True)
+    except FileExistsError as error:
+        sys.exit(error)
 
     return True
 
@@ -64,12 +80,4 @@ def _is_image(file: str) -> Tuple[int, int]:
     except IOError:
         return (0, 0)
 
-
-def _create_dir(directory: str) -> bool:
-    try:
-        Path(directory).mkdir(parents=True, exist_ok=True)
-    except FileExistsError as error:
-        sys.exit(error)
-
-    return True
 
