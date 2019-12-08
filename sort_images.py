@@ -33,6 +33,8 @@ def move_img(files: List[str], destination: str, recursive: bool) -> bool:
             lst_files: List[str] = [os.path.join(file, file_name)
                                     for file_name in os.listdir(file)]
             move_img(lst_files, destination, recursive)
+        else:
+            print('{}: is not image'.format(file))
 
 
     return True
