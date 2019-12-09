@@ -5,7 +5,6 @@ This module is mainly used for handling command line arguments,
 and decided which function to call based on arguments.
 """
 
-import os
 import argparse
 import sort_images
 
@@ -34,16 +33,11 @@ def main():
     # Get all the arguments
     args = parser.parse_args()
 
-    # Create destination directory if not exists and dry_run is False
+    # Create destination directory if not exists
     if not args.dry_run:
         sort_images.create_dir(args.DEST)
         if args.verbose:
-            print('{}: is created.\n'.format(args.DEST))
-    elif os.path.exists(args.DEST) and not os.path.isdir(args.DEST):
-        print('{}: cannot be created!\n'.format(args.DEST))
-    else:
-        print('{}: can be create!\n'.format(args.DEST))
-
+            print('{} is created.'.format(args.DEST))
 
 
     # get all subsequent files depending on 'recursive' options

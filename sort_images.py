@@ -37,7 +37,7 @@ def sort_img(files: List[str], destination: str, recursive: bool,
                     if verbose:
                         print('MOVE: "{}"\nTO:   "{}"'.format(file, new_directory))
             except shutil.Error as error:
-                sys.stderr.write('{}\n'.format(error))
+                print('{0}'.format(error), file=sys.stderr)
 
         # If file is directory and recursive is True
         elif recursive and os.path.isdir(file):
@@ -46,7 +46,7 @@ def sort_img(files: List[str], destination: str, recursive: bool,
                                     for file_name in os.listdir(file)]
             sort_img(lst_files, destination, recursive, copy, verbose)
         else:
-            sys.stderr.write('{}: is not image\n'.format(file))
+            print('"{0}": is not image'.format(file), file=sys.stderr)
 
 
     return True
