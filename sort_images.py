@@ -53,38 +53,37 @@ def sort_img(files: List[str], destination: str, recursive: bool,
     return True
 
 
-def dry_run(files:List[str], recursive: bool) -> List[ImagePtr]:
+def dry_run(linked_list: List[ImagePtr], files: List[str],
+            recursive: bool) -> List[ImagePtr]:
     """
-    sort images by height and width
+
+    summaries the number of images and image size that's moved/copied
 
     Return: lst: List[ImagePtr]
     """
-    # Contains list of object ImagePtr, with each object contains images
-    # who has the same width and height
-    lst: List[ImagePtr] = []
-
-    # list all files in directory, get its absolute path
-    files: List[str] = [f for f in os.listdir(directory)
-                        if os.path.isfile(os.path.join(directory, f))]
 
     # Cycle through each file
     for file in files:
-        file = os.path.join(directory, file) # get the full path
-        # Check to see whether it can grab img width and height
-        img_size: Tuple = _is_image(file)
-
-        if img_size: # If it can, do the following:
+        # get the image width and size
+        img_size: Tuple[int, int] = _is_image(file)
+        # do the following if it's image
+        if img_size:
             added: bool = False
-            for node in lst: # Cycle through each node in list
+            for node in linked_list: # Cycle through each node in list
                 if node.is_same(img_size): # Add img path into node if same size
-                    node.add_to_path(file)
-                    added = True
+                    node.increment(os.path.getsize(file))
             # Create new node if it's not added to the current nodes
             if not added:
-                lst.append(ImagePtr(img_size[0], img_size[1], file))
+                linked_list.append(ImagePtr(img_size[0], img_size[1], file))
+        # if it's directory and recursive is on:
+        elif recursive and os.path.isdir(file):
+            # recursively calling its own function with complete file path
+            lst_files: List[str] = [os.path.join(file, file_name)
+                                    for file_name in os.listdir(file)]
+            linked_list[:0] = dry_run(linked_list, lst_files, recursive)
 
-    _print_all(lst)
-    return lst
+    return linked_list
+
 
 def create_dir(directory: str) -> bool:
     """

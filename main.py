@@ -7,8 +7,9 @@ and decided which function to call based on arguments.
 
 import os
 import argparse
+from typing import List
 import sort_images
-
+from image_ptr import ImagePtr
 
 def main():
     """
@@ -45,10 +46,12 @@ def main():
         print('{}: can be create!\n'.format(args.DEST))
 
 
-
-    # get all subsequent files depending on 'recursive' options
-    sort_images.sort_img(args.SRC, args.DEST, args.recursive, args.copy,
-                         args.verbose)
+    if args.dry_run:
+        linked_list: List[ImagePtr] = []
+        sort_images.dry_run(linked_list, args.SRC, args.recursive)
+    else:
+        sort_images.sort_img(args.SRC, args.DEST, args.recursive, args.copy,
+                             args.verbose)
 
 
 # execute main() function

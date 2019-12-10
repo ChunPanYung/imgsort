@@ -1,7 +1,8 @@
 """
 This class contains all images who has the same height and width.
 """
-from typing import List, Tuple # needed for Type aliases for 'List' data type
+import os
+from typing import Tuple
 from PIL import Image
 
 class ImagePtr:
@@ -9,12 +10,13 @@ class ImagePtr:
     This class contains all images who has the same height and width.
     """
 
-    def __init__(self, width, height, img):
+    def __init__(self, width, height, file: str):
         self.width: int = width
         self.height: int = height
-        # contains all images path who share the same width and height
-        self.path: List[str] = []
-        self.path[:0] = [img]
+        # num of image with same width and height
+        self.num: int = 1
+        # total size(bytes) of all images who share the same width and height
+        self.total_size: float = os.path.getsize(file)
 
     def get_width(self) -> int:
         """ return the width of image : int """
@@ -24,21 +26,21 @@ class ImagePtr:
         """ return the height of image : int """
         return self.height
 
-    def get_path(self) -> List[str]:
-        """ return list of image path who shares the same height and weight """
-        return self.path
+    def get_num(self) -> int:
+        """ return number of images who share the same width and height """
+        return self.num
 
-    def add_to_path(self, img: str) -> None:
-        """
-        Add image file path into path[] variable
-        if it's image and has same width and height as in this class
+    def get_total_size(self) -> float:
+        """ return total size of images who share the same width and height """
+        return self.total_size
 
-        Return image width and height
-        else return empty tuple
-        """
-        self.path[:0] = [img]
+    def increment(self, img_size: float) -> bool:
+        """ increment the number by image by one and total_size by img_size """
+        self.num += 1
+        self.total_size += img_size
+        return True
 
-    def is_same(self, tup: Tuple) -> bool:
+    def is_same(self, tup: Tuple[int, int]) -> bool:
         """
         recive that tuple that contains 2 value (width: int, height: int)
 
