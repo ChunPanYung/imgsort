@@ -6,6 +6,7 @@ and decided which function to call based on arguments.
 """
 
 import os
+import sys
 import argparse
 from typing import List
 import sort_images
@@ -17,10 +18,10 @@ def main():
     """
     parser = argparse.ArgumentParser()
     # Add positional arguments
-    parser.add_argument('SRC', nargs='+',
-                        help='image file(s)')
-    parser.add_argument('DEST',
-                        help='destination folder for sorted images')
+    parser.add_argument('PATH', nargs='+',
+                        help='''Provides Source Directory(s) and Destination
+                                Directory for image sorting.  If --dry_run is
+                                given, only needed Source Directory(s).''')
 
     # Add optional arguments
     parser.add_argument('-r', '--recursive', action='store_true',
@@ -35,25 +36,25 @@ def main():
     # Get all the arguments
     args = parser.parse_args()
 
+    # Requier at least 2 position arguments if -d is False
+    if not args.dry_run and len(args.PATH) < 2:
+        sys.exit('Please indicates both SRC and DEST directories')
+
     # Create destination directory if not exists and dry_run is False
     if not args.dry_run:
-        sort_images.create_dir(args.DEST)
+        sort_images.create_dir(args.PATH[-1])
         if args.verbose:
-            print('{}: is created.\n'.format(args.DEST))
-    elif os.path.exists(args.DEST) and not os.path.isdir(args.DEST):
-        print('{}: cannot be created!\n'.format(args.DEST))
-    else:
-        print('{}: can be create!\n'.format(args.DEST))
+            print('{}: is created.\n'.format(args.PATH[-1]))
 
     # If dry_run arguments is true, no actual images is sorted
     if args.dry_run:
         lst: List[ImagePtr] = []
-        lst = sort_images.dry_run(lst, args.SRC, args.recursive)
+        lst = sort_images.dry_run(lst, args.PATH, args.recursive)
         for node in lst:
             node.to_string()
     else:
-        sort_images.sort_img(args.SRC, args.DEST, args.recursive, args.copy,
-                             args.verbose)
+        sort_images.sort_img(args.PATH[:-1], args.PATH[-1], args.recursive,
+                             args.copy, args.verbose)
 
 
 # execute main() function
