@@ -16,7 +16,7 @@ class ImagePtr:
         # num of image with same width and height
         self.num: int = 1
         # total size(bytes) of all images who share the same width and height
-        self.total_size: float = os.path.getsize(file)
+        self.total_size: int = os.path.getsize(file)
 
     def get_width(self) -> int:
         """ return the width of image : int """
@@ -30,11 +30,14 @@ class ImagePtr:
         """ return number of images who share the same width and height """
         return self.num
 
-    def get_total_size(self) -> float:
-        """ return total size of images who share the same width and height """
+    def get_total_size(self) -> int:
+        """ return total size of images who share the same width and height
+            return int is in bytes size
+        """
+
         return self.total_size
 
-    def increment(self, img_size: float) -> bool:
+    def increment(self, img_size: int) -> bool:
         """ increment the number by image by one and total_size by img_size """
         self.num += 1
         self.total_size += img_size
@@ -50,3 +53,13 @@ class ImagePtr:
             return True
 
         return False
+
+    def to_string(self) -> bool:
+        """
+        print all value in a class
+        """
+        print('Image size: {0}x{1}'.format(self.width, self.height))
+        print('-Total numbers: {}'.format(self.num))
+        print('-Total size: {}\n'.format(self.total_size))
+
+        return True

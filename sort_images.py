@@ -64,14 +64,16 @@ def dry_run(linked_list: List[ImagePtr], files: List[str],
 
     # Cycle through each file
     for file in files:
-        # get the image width and size
+        # get the image width and height
         img_size: Tuple[int, int] = _is_image(file)
         # do the following if it's image
-        if img_size:
+        if img_size != (0, 0):
             added: bool = False
             for node in linked_list: # Cycle through each node in list
                 if node.is_same(img_size): # Add img path into node if same size
                     node.increment(os.path.getsize(file))
+                    added = True
+
             # Create new node if it's not added to the current nodes
             if not added:
                 linked_list.append(ImagePtr(img_size[0], img_size[1], file))
@@ -80,7 +82,7 @@ def dry_run(linked_list: List[ImagePtr], files: List[str],
             # recursively calling its own function with complete file path
             lst_files: List[str] = [os.path.join(file, file_name)
                                     for file_name in os.listdir(file)]
-            linked_list[:0] = dry_run(linked_list, lst_files, recursive)
+            linked_list = dry_run(linked_list, lst_files, recursive)
 
     return linked_list
 
