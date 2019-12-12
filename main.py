@@ -5,7 +5,6 @@ This module is mainly used for handling command line arguments,
 and decided which function to call based on arguments.
 """
 
-import os
 import sys
 import argparse
 from typing import List
@@ -32,6 +31,10 @@ def main():
                         help='print detail information')
     parser.add_argument('-d', '--dry_run', action='store_true',
                         help='simulate the execution, no file will be moved/copied')
+    parser.add_argument('-i', '--include', action='store', type=str,
+                        help='sorting only certain size indicated by this argument')
+    parser.add_argument('-e', '--exclude', action='store', type=str,
+                        help='exclude certain image sizes indicated by this argument')
 
     # Get all the arguments
     args = parser.parse_args()
