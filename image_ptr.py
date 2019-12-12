@@ -4,6 +4,7 @@ This class contains all images who has the same height and width.
 import os
 from typing import Tuple
 from PIL import Image
+from hurry.filesize import size
 
 class ImagePtr:
     """
@@ -60,6 +61,6 @@ class ImagePtr:
         """
         print('Image size: {0}x{1}'.format(self.width, self.height))
         print('-Total numbers: {}'.format(self.num))
-        print('-Total size: {}\n'.format(self.total_size))
+        print('-Total size: {}\n'.format(size(self.total_size)))
 
         return True

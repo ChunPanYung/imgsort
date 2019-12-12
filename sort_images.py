@@ -114,24 +114,3 @@ def _is_image(file: str) -> Tuple[int, int]:
             return img.size
     except IOError:
         return (0, 0)
-
-
-
-def _print_all(lst: List[ImagePtr]) -> bool:
-    """
-    Private Function
-    Print information about sorted images (by width and height)
-    Return False if there's ImagePtr._lst is empty
-    """
-    if not lst:
-        print("No image is being sorted into folder.")
-        return False
-
-    # print all sorted images and its related information
-    for node in lst:
-        # print sorted image size and all its related location
-        print('Image Size: {}x{}'.format(node.width, node.height))
-        # For every object, print all strings in List: node.path
-        for location in node.path:
-            print('| ', location)
-    return True
