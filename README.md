@@ -21,5 +21,5 @@ CLI Command use for sorting images
 
 
 ## Update [2019-12-11]
-*Add verbose function
-*Add Dry_run function
+* Add verbose function
+* Add Dry_run function
