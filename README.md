@@ -20,7 +20,6 @@ CLI Command use for sorting images
 |-c, --copy     |copy images instead of moving images                                     |
 
 
-## Update [Date Here]
-Add verbose function
-
-Add Dry_run function
+## Update [2019-12-11]
+*Add verbose function
+*Add Dry_run function
