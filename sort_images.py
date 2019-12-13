@@ -5,6 +5,7 @@ in linked list.
 import os
 import sys
 import shutil
+import re
 from typing import List, Tuple
 from pathlib import Path
 from PIL import Image
@@ -99,6 +100,12 @@ def create_dir(directory: str) -> bool:
         sys.exit(error)
 
     return True
+
+def split_str(string: str) -> List[str]:
+    """
+    Split string into int
+    """
+    return re.split('[x,]', string)
 
 
 # private function
