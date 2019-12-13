@@ -12,7 +12,7 @@ from PIL import Image
 from image_ptr import ImagePtr
 
 def sort_img(files: List[str], destination: str, recursive: bool,
-             copy: bool, verbose: bool) -> bool:
+             copy: bool, verbose: bool, limit_size: List[int]) -> bool:
     """
     sort all images to the destination directory
     """
@@ -46,7 +46,7 @@ def sort_img(files: List[str], destination: str, recursive: bool,
             # recursively calling its own function with complete file path
             lst_files: List[str] = [os.path.join(file, file_name)
                                     for file_name in os.listdir(file)]
-            sort_img(lst_files, destination, recursive, copy, verbose)
+            sort_img(lst_files, destination, recursive, copy, verbose, limit_size)
         else:
             print('"{0}": is not image'.format(file), file=sys.stderr)
 
@@ -55,7 +55,7 @@ def sort_img(files: List[str], destination: str, recursive: bool,
 
 
 def dry_run(linked_list: List[ImagePtr], files: List[str],
-            recursive: bool) -> List[ImagePtr]:
+            recursive: bool, limit_size: List[int]) -> List[ImagePtr]:
     """
 
     summaries the number of images and image size that's moved/copied
@@ -83,7 +83,7 @@ def dry_run(linked_list: List[ImagePtr], files: List[str],
             # recursively calling its own function with complete file path
             lst_files: List[str] = [os.path.join(file, file_name)
                                     for file_name in os.listdir(file)]
-            linked_list = dry_run(linked_list, lst_files, recursive)
+            linked_list = dry_run(linked_list, lst_files, recursive, limit_size)
 
     return linked_list
 
@@ -100,12 +100,6 @@ def create_dir(directory: str) -> bool:
         sys.exit(error)
 
     return True
-
-def split_str(string: str) -> List[str]:
-    """
-    Split string into int
-    """
-    return re.split('[x,]', string)
 
 
 # private function

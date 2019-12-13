@@ -7,6 +7,7 @@ and decided which function to call based on arguments.
 
 import sys
 import argparse
+import re
 from typing import List
 import sort_images
 from image_ptr import ImagePtr
@@ -39,7 +40,7 @@ def main():
     # Get all the arguments
     args = parser.parse_args()
 
-    # Requier at least 2 position arguments if -d is False
+    # Require at least 2 position arguments if -d is False
     if not args.dry_run and len(args.PATH) < 2:
         sys.exit('Please indicates both SRC and DEST directories')
 
@@ -49,15 +50,23 @@ def main():
         if args.verbose:
             print('{}: is created.\n'.format(args.PATH[-1]))
 
+
+    # Either args.include or args.exclude, can't have both
+    if args.include and args.exclude:
+        sys.exit('Either --include or --exclude arguments, cannot have both.')
+    # get the args.include or args.exclude value
+    limit_size: List[int] = [int(num) for num in
+                             re.split('[x,]', args.include + args.exclude)]
+
     # If dry_run arguments is true, no actual images is sorted
     if args.dry_run:
         lst: List[ImagePtr] = []
-        lst = sort_images.dry_run(lst, args.PATH, args.recursive)
+        lst = sort_images.dry_run(lst, args.PATH, args.recursive, limit_size)
         for node in lst:
             node.to_string()
     else:
         sort_images.sort_img(args.PATH[:-1], args.PATH[-1], args.recursive,
-                             args.copy, args.verbose)
+                             args.copy, args.verbose, limit_size)
 
 
 # execute main() function
