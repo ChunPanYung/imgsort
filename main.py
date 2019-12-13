@@ -70,7 +70,7 @@ def main():
     else:
         # Putting all boolean args into one bundle
         bool_value: BoolCollection = BoolCollection(args.recursive, args.copy,
-                                                    args.verbose)
+                                                    args.verbose, args.include)
         sort_images.sort_img(args.PATH[:-1], args.PATH[-1], bool_value,
                              limit_size)
 

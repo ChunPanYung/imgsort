@@ -21,7 +21,7 @@ def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
         # get the image width and size
         size: Tuple[int, int] = _is_image(file)
         # sort to destination if it's image
-        if size != (0, 0):
+        if _limit_img(size, BoolCollection.include, limit_size):
             # Create new directory if not exist
             # directory name is all image with the same size
             new_directory: str = os.path.join(destination,
@@ -115,3 +115,35 @@ def _is_image(file: str) -> Tuple[int, int]:
             return img.size
     except IOError:
         return (0, 0)
+
+
+def _limit_img(img_size: Tuple[int, int], include: bool,
+               limit_size: List[int]) -> bool:
+    """
+    Return False if img_size is (0, 0)
+    Return True if include is True and img_size is in included size
+    Return False if it's excluded size
+    Othersie return True
+    """
+    # Return False if img_size is (0, 0)
+    if img_size == (0, 0):
+        return False
+    # if limit_size is not empty, it means either include args or exclude
+    # args is true
+    elif limit_size:
+        # Return True if include is True and img_size is in included size
+        if include:
+            for i, j in zip(limit_size[0::2], limit_size[1::2]):
+                if img_size[0] == i and img_size[1] == j:
+                    return True
+            # return false if it's not included size
+            return False
+        # Return False if it's excluded size
+        else:
+            for i, j in zip(limit_size[0::2], limit_size[1::2]):
+                if img_size[0] == i and img_size[1] == j:
+                    return False
+            # return false if it's not included size
+            return True
+    # Otherwise return True
+    return True
