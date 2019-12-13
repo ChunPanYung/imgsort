@@ -11,6 +11,8 @@ import re
 from typing import List
 import sort_images
 from image_ptr import ImagePtr
+from bool_collection import BoolCollection
+
 
 def main():
     """
@@ -58,6 +60,7 @@ def main():
     limit_size: List[int] = [int(num) for num in
                              re.split('[x,]', args.include + args.exclude)]
 
+
     # If dry_run arguments is true, no actual images is sorted
     if args.dry_run:
         lst: List[ImagePtr] = []
@@ -65,8 +68,11 @@ def main():
         for node in lst:
             node.to_string()
     else:
-        sort_images.sort_img(args.PATH[:-1], args.PATH[-1], args.recursive,
-                             args.copy, args.verbose, limit_size)
+        # Putting all boolean args into one bundle
+        bool_value: BoolCollection = BoolCollection(args.recursive, args.copy,
+                                                    args.verbose)
+        sort_images.sort_img(args.PATH[:-1], args.PATH[-1], bool_value,
+                             limit_size)
 
 
 # execute main() function

@@ -5,14 +5,14 @@ in linked list.
 import os
 import sys
 import shutil
-import re
 from typing import List, Tuple
 from pathlib import Path
 from PIL import Image
 from image_ptr import ImagePtr
+from bool_collection import BoolCollection
 
-def sort_img(files: List[str], destination: str, recursive: bool,
-             copy: bool, verbose: bool, limit_size: List[int]) -> bool:
+def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
+             limit_size: List[int]) -> bool:
     """
     sort all images to the destination directory
     """
@@ -30,23 +30,23 @@ def sort_img(files: List[str], destination: str, recursive: bool,
             # Move or copy images to new directory
             # output error if file with same name exists
             try:
-                if copy:
+                if bool_value.copy:
                     shutil.copy(file, new_directory)
-                    if verbose:
+                    if bool_value.verbose:
                         print('COPY: "{}"\nTO:   "{}"'.format(file, new_directory))
                 else:
                     shutil.move(file, new_directory)
-                    if verbose:
+                    if bool_value.verbose:
                         print('MOVE: "{}"\nTO:   "{}"'.format(file, new_directory))
             except shutil.Error as error:
                 print('{0}'.format(error), file=sys.stderr)
 
         # If file is directory and recursive is True
-        elif recursive and os.path.isdir(file):
+        elif bool_value.recursive and os.path.isdir(file):
             # recursively calling its own function with complete file path
             lst_files: List[str] = [os.path.join(file, file_name)
                                     for file_name in os.listdir(file)]
-            sort_img(lst_files, destination, recursive, copy, verbose, limit_size)
+            sort_img(lst_files, destination, bool_value, limit_size)
         else:
             print('"{0}": is not image'.format(file), file=sys.stderr)
 
