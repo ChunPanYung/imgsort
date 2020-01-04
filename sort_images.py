@@ -47,9 +47,6 @@ def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
             lst_files: List[str] = [os.path.join(file, file_name)
                                     for file_name in os.listdir(file)]
             sort_img(lst_files, destination, bool_value, limit_size)
-        else:
-            print('"{0}": is not image'.format(file), file=sys.stderr)
-
 
     return True
 
