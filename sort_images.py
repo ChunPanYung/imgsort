@@ -121,7 +121,7 @@ def _limit_img(img_size: Tuple[int, int], include: bool,
                limit_size: List[int]) -> bool:
     """
     Return False if img_size is (0, 0)
-    Return True if include is True and img_size is in included size
+    Return True if img_size is in included size
     Return False if it's excluded size
     Othersie return True
     """
@@ -143,7 +143,8 @@ def _limit_img(img_size: Tuple[int, int], include: bool,
             for i, j in zip(limit_size[0::2], limit_size[1::2]):
                 if img_size[0] == i and img_size[1] == j:
                     return False
-            # return false if it's not included size
+            # return True if it's not excluded size
             return True
+        
     # Otherwise return True
     return True
