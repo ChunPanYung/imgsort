@@ -1,0 +1,13 @@
+add new function _limit_img()
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch dev
+# Your branch is ahead of 'origin/dev' by 1 commit.
+#   (use "git push" to publish your local commits)
+#
+# Changes to be committed:
+#	modified:   bool_collection.py
+#	modified:   main.py
+#	modified:   sort_images.py
+#

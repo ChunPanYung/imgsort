@@ -56,9 +56,15 @@ def main():
     # Either args.include or args.exclude, can't have both
     if args.include and args.exclude:
         sys.exit('Either --include or --exclude arguments, cannot have both.')
+
+
     # get the args.include or args.exclude value
-    limit_size: List[int] = [int(num) for num in
-                             re.split('[x,]', args.include + args.exclude)]
+    limit_size: List[int] = []
+
+    if args.include:
+        limit_size = [int(num) for num in re.split('[x,]', args.include)]
+    elif args.exclude:
+        limit_size = [int(num) for num in re.split('[x,]', args.exclude)]
 
 
     # If dry_run arguments is true, no actual images is sorted
