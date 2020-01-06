@@ -22,7 +22,7 @@ def main():
     # Add positional arguments
     parser.add_argument('PATH', nargs='+',
                         help='''Provides Source Directory(s) and Destination
-                                Directory for image sorting.  If --dry_run is
+                                Directory for image sorting.  If --summary is
                                 given, only needed Source Directory(s).''')
 
     # Add optional arguments
@@ -32,7 +32,7 @@ def main():
                         help='copy instead of move image files')
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='print detail information')
-    parser.add_argument('-d', '--dry_run', action='store_true',
+    parser.add_argument('-s', '--summary', action='store_true',
                         help='simulate the execution, no file will be moved/copied')
     parser.add_argument('-i', '--include', action='store', type=str,
                         help='sorting only certain size indicated by this argument')
@@ -43,11 +43,11 @@ def main():
     args = parser.parse_args()
 
     # Require at least 2 position arguments if -d is False
-    if not args.dry_run and len(args.PATH) < 2:
+    if not args.summary and len(args.PATH) < 2:
         sys.exit('Please indicates both SRC and DEST directories')
 
-    # Create destination directory if not exists and dry_run is False
-    if not args.dry_run:
+    # Create destination directory if not exists and summary is False
+    if not args.summary:
         sort_images.create_dir(args.PATH[-1])
         if args.verbose:
             print('{}: is created.\n'.format(args.PATH[-1]))
@@ -71,10 +71,10 @@ def main():
                                                 args.verbose, 
                                                 True if args.include else False)
 
-    # If dry_run arguments is true, no actual images is sorted
-    if args.dry_run:
+    # If summary arguments is true, no actual images is sorted
+    if args.summary:
         lst: List[ImagePtr] = []
-        lst = sort_images.dry_run(lst, args.PATH, bool_value, limit_size)
+        lst = sort_images.summary(lst, args.PATH, bool_value, limit_size)
         if not lst:
             print('No image files found!  Maybe using it with -r option?')
         for node in lst:

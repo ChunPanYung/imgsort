@@ -51,7 +51,7 @@ def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
     return True
 
 
-def dry_run(linked_list: List[ImagePtr], files: List[str],
+def summary(linked_list: List[ImagePtr], files: List[str],
         bool_value: BoolCollection, limit_size: List[int]) -> List[ImagePtr]:
     """
 
@@ -81,7 +81,7 @@ def dry_run(linked_list: List[ImagePtr], files: List[str],
             # recursively calling its own function with complete file path
             lst_files: List[str] = [os.path.join(file, file_name)
                                     for file_name in os.listdir(file)]
-            linked_list = dry_run(linked_list, lst_files, bool_value, limit_size)
+            linked_list = summary(linked_list, lst_files, bool_value, limit_size)
 
     return linked_list
 
