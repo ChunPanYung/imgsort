@@ -21,7 +21,7 @@ def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
         # get the image width and size
         size: Tuple[int, int] = _is_image(file)
         # sort to destination if it's image
-        if _limit_img(size, BoolCollection.include, limit_size):
+        if _limit_img(size, bool_value.include, limit_size):
             # Create new directory if not exist
             # directory name is all image with the same size
             new_directory: str = os.path.join(destination,
@@ -52,7 +52,7 @@ def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
 
 
 def dry_run(linked_list: List[ImagePtr], files: List[str],
-            recursive: bool, limit_size: List[int]) -> List[ImagePtr]:
+        bool_value: BoolCollection, limit_size: List[int]) -> List[ImagePtr]:
     """
 
     summaries the number of images and image size that's moved/copied
@@ -63,24 +63,26 @@ def dry_run(linked_list: List[ImagePtr], files: List[str],
     # Cycle through each file
     for file in files:
         # get the image width and height
-        img_size: Tuple[int, int] = _is_image(file)
+        size: Tuple[int, int] = _is_image(file)
         # do the following if it's image
-        if img_size != (0, 0):
+        if _limit_img(size, bool_value.include, limit_size):
             added: bool = False
             for node in linked_list: # Cycle through each node in list
-                if node.is_same(img_size): # Add img path into node if same size
+                if node.is_same(size): # Add img path into node if same size
                     node.increment(os.path.getsize(file))
                     added = True
 
             # Create new node if it's not added to the current nodes
             if not added:
-                linked_list.append(ImagePtr(img_size[0], img_size[1], file))
+                linked_list.append(ImagePtr(size[0], size[1], file))
+
         # if it's directory and recursive is on:
-        elif recursive and os.path.isdir(file):
+        elif bool_value.recursive and os.path.isdir(file):
             # recursively calling its own function with complete file path
             lst_files: List[str] = [os.path.join(file, file_name)
                                     for file_name in os.listdir(file)]
-            linked_list = dry_run(linked_list, lst_files, recursive, limit_size)
+            # TODO: recursive may not works here
+            linked_list = dry_run(linked_list, lst_files, bool_value, limit_size)
 
     return linked_list
 
