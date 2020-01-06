@@ -75,6 +75,8 @@ def main():
     if args.dry_run:
         lst: List[ImagePtr] = []
         lst = sort_images.dry_run(lst, args.PATH, bool_value, limit_size)
+        if not lst:
+            print('No image files found!  Maybe using it with -r option?')
         for node in lst:
             node.to_string()
     else:
