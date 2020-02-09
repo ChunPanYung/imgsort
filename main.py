@@ -12,12 +12,17 @@ from typing import List
 import sort_images
 from image_ptr import ImagePtr
 from bool_collection import BoolCollection
+from gui_app import GuiApp
 
 
 def main():
-    """
-    Parse all command line options
-    """
+    
+    # If no args is pass (sys.arvs = 1), then GUI mode
+    if len(sys.argv) == 1:
+        GuiApp().run()
+        sys.exit()
+
+    # CLI Here
     parser = argparse.ArgumentParser()
     # Add positional arguments
     parser.add_argument('PATH', nargs='+',

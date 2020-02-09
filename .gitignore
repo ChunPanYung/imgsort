@@ -20,6 +20,7 @@ lib64/
 lib64
 parts/
 sdist/
+share/
 var/
 wheels/
 *.egg-info/
@@ -114,3 +115,5 @@ sys
 pylintrc
 2q
 *.md.backup
+*.bak
+\\

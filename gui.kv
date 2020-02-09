@@ -1,0 +1,22 @@
+#:kivy 1.11.1
+
+<MainWindow>:
+    BoxLayout:
+        orientation: 'horizontal'
+        height: root.height
+        width: root.width
+
+        TextInput:
+            text: 'textbox :3'
+            height: root.height
+            size_hint_x: 3 / 4
+
+
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_x: 1 / 4
+
+            Button:
+                text: 'Add'
+            Button:
+                text: 'Confirm'
