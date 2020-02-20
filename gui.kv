@@ -1,22 +1,44 @@
 #:kivy 1.11.1
 
 <MainWindow>:
-    BoxLayout:
-        orientation: 'horizontal'
+    orientation: 'horizontal'
+    height: root.height
+    width: root.width
+
+    TextInput:
+        id: selected_files
+        text: 'textbox :3'
         height: root.height
-        width: root.width
+        size_hint_x: 3 / 4
 
-        TextInput:
-            text: 'textbox :3'
-            height: root.height
-            size_hint_x: 3 / 4
 
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint_x: 1 / 4
+
+        Button:
+            text: 'Load'
+            on_press: root.show_load()
+
+        Button:
+            text: 'Confirm'
+
+<LoadDialog>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+
+        FileChooserListView:
+            id: filechooser
 
         BoxLayout:
-            orientation: 'vertical'
-            size_hint_x: 1 / 4
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release:root.cancel()
 
             Button:
-                text: 'Add'
-            Button:
-                text: 'Confirm'
+                text: "Load"
+                on_release: root.load(filechooser.path, filechooser.selection)
