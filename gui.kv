@@ -1,6 +1,6 @@
 #:kivy 1.11.1
 
-<MainWindow>:
+<MainWindow>: # BoxLayout
     orientation: 'horizontal'
     height: root.height
     width: root.width
@@ -23,7 +23,7 @@
         Button:
             text: 'Confirm'
 
-<LoadDialog>:
+<LoadDialog>: # FloatLayout
     BoxLayout:
         size: root.size
         pos: root.pos
