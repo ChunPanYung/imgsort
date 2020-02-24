@@ -7,6 +7,12 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import ObjectProperty
 
+
+class LoadDialog(FloatLayout):
+    load: ObjectProperty = ObjectProperty(None)
+    cancel: ObjectProperty = ObjectProperty(None)
+
+
 class MainWindow(BoxLayout):
     pass
 
@@ -14,21 +20,18 @@ class MainWindow(BoxLayout):
         self._popup.dismiss()
 
     def show_load(self):
+        # display load dialog, assign function to load button and cancel button
         content: LoadDialog = LoadDialog(load=self.load, cancel=self.dismiss_popup)
         self._popup: Popup = Popup(title="Load file", content=content,
                                    size_hint=(0.9, 0.9))
         self._popup.open()
 
     def load(self, path, filename):
-        with open(os.path.join(path, filename[0])) as stream:
-            self.ids.selected_files.text = stream.read()
+        # read files then close the load dialog
+        self.ids.selected_files.text = os.path.join(path, filename[0])
+        self.dismiss_popup()
 
-class LoadDialog(FloatLayout):
-    load: ObjectProperty = ObjectProperty(None)
-    cancel: ObjectProperty = ObjectProperty(None)
 
 class GuiApp(App):
     def build(self):
         return MainWindow()
-
-
