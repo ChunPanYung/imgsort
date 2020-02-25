@@ -27,8 +27,10 @@ class MainWindow(BoxLayout):
         self._popup.open()
 
     def load(self, path, filename):
-        # read files then close the load dialog
-        self.ids.selected_files.text = os.path.join(path, filename[0])
+        """ read files then close the load dialog """
+        self.ids.selected_files.text = '\n'.join([os.path.join(path, fn) 
+                                                for fn in filename])
+        # Close the popup windows
         self.dismiss_popup()
 
 
