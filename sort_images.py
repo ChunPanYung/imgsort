@@ -52,7 +52,7 @@ def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
 
 
 def summary(linked_list: List[ImagePtr], files: List[str],
-        bool_value: BoolCollection, limit_size: List[int]) -> List[ImagePtr]:
+            bool_value: BoolCollection, limit_size: List[int]) -> List[ImagePtr]:
     """
 
     summaries the number of images and image size that's moved/copied
@@ -128,7 +128,7 @@ def _limit_img(img_size: Tuple[int, int], include: bool,
         return False
     # if limit_size is not empty, it means either include args or exclude
     # args is true
-    elif limit_size:
+    if limit_size:
         # Return True if include is True and img_size is in included size
         if include:
             for i, j in zip(limit_size[0::2], limit_size[1::2]):
@@ -136,13 +136,13 @@ def _limit_img(img_size: Tuple[int, int], include: bool,
                     return True
             # return false if it's not included size
             return False
+
         # Return False if it's excluded size
-        else:
-            for i, j in zip(limit_size[0::2], limit_size[1::2]):
-                if img_size[0] == i and img_size[1] == j:
-                    return False
-            # return True if it's not excluded size
-            return True
-        
+        for i, j in zip(limit_size[0::2], limit_size[1::2]):
+            if img_size[0] == i and img_size[1] == j:
+                return False
+        # return True if it's not excluded size
+        return True
+
     # Otherwise return True
     return True
