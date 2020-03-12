@@ -1,3 +1,4 @@
+""" Main GUI entry """
 import os
 
 from kivy.app import App
@@ -33,7 +34,17 @@ class MainWindow(BoxLayout):
         # Close the popup windows
         self.dismiss_popup()
 
+    def confirm(self):
+        """ Next dialog that contains options and select destination directory
+            after confirming the integrity of data. 
+        """
+        return None
+
+
 
 class GuiApp(App):
     def build(self):
         return MainWindow()
+
+if __name__ == '__main__':
+    GuiApp().run()

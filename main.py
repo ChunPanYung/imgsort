@@ -12,17 +12,10 @@ from typing import List
 import sort_images
 from image_ptr import ImagePtr
 from bool_collection import BoolCollection
-from gui_app import GuiApp
 
 
 def main():
-    
-    # If no args is pass (sys.arvs = 1), then GUI mode
-    if len(sys.argv) == 1:
-        GuiApp().run()
-        sys.exit()
-
-    # CLI Here
+    """ main CLI Entry """
     parser = argparse.ArgumentParser()
     # Add positional arguments
     parser.add_argument('PATH', nargs='+',
@@ -73,7 +66,7 @@ def main():
 
     # Putting all boolean args into one bundle
     bool_value: BoolCollection = BoolCollection(args.recursive, args.copy,
-                                                args.verbose, 
+                                                args.verbose,
                                                 True if args.include else False)
 
     # If summary arguments is true, no actual images is sorted
@@ -89,6 +82,5 @@ def main():
                              limit_size)
 
 
-# execute main() function
 if __name__ == '__main__':
     main()
