@@ -3,7 +3,6 @@ This class contains all images who has the same height and width.
 """
 import os
 from typing import Tuple
-from PIL import Image
 from hurry.filesize import size
 
 class ImagePtr():
