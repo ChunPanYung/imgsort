@@ -45,6 +45,7 @@ print summary images (numbers and total size), grouped by image size, excluding 
 * Change --dry_run to --summary naming wise
 
 ## System Requirement
-* Python 3.7.3
+* Python 3.7.6
 * Pillow 6.2.1
 * hurry.filesize 0.9
+* KIVY 1.11.1
