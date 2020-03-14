@@ -1,9 +1,7 @@
 #:kivy 1.11.1
 
 <MainWindow>: # BoxLayout
-    orientation: 'horizontal'
-    height: root.height
-    width: root.width
+    size: root.size
 
     TextInput:
         id: selected_files
@@ -42,4 +40,25 @@
 
             Button:
                 text: "Load"
-                on_release: root.load(filechooser.path, filechooser.selection)
+                on_release: root._load(filechooser.path, filechooser.selection)
+
+<OptionDialog>: # FloatLayout
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+
+        BoxLayout: # contains all the options and choosing destination path
+            TextInput:
+                id: destination_text
+                text: "Destination Directory"
+            Button: 
+                text: "..."
+
+
+        BoxLayout: # contains all the options and choosing destination path
+            orientation: "vertical"
+            # Next Dialog
+            Button:
+                text: "Confirm"
+            Button:
+                text: "Cancel"
