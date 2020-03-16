@@ -1,5 +1,6 @@
 """ Main GUI entry """
 import os
+from typing import List
 
 from kivy.app import App
 from kivy.uix.popup import Popup
@@ -13,7 +14,9 @@ class MainWindow(BoxLayout):
     def __init__(self):
         """ class variable & initialization """
         self._popup: Popup = None
+        self._files: List[str] = None
         super(MainWindow, self).__init__()
+
 
     def dismiss_popup(self):
         """ remove/dismiss gui window """
@@ -37,6 +40,12 @@ class MainWindow(BoxLayout):
         """ option dialog that contains options and select destination directory
             after confirming the integrity of data.
         """
+        _files: List[str] = None
+        _content: OptionDialog = OptionDialog(self.load_file, self.dismiss_popup,
+                                              _files)
+        self._popup = Popup(title="Selection Destination", content=_content,
+                            size_hint=(0.9, 0.9))
+        self._popup.open()
         return None
 
 

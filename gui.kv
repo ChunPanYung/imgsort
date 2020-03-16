@@ -19,6 +19,7 @@
 
         Button:
             text: 'Confirm'
+            on_press: root.confirm()
 
 <LoadDialog>: # FloatLayout
     BoxLayout:
@@ -35,7 +36,7 @@
             height: 30
             Button:
                 text: "Cancel"
-                on_release:root.cancel()
+                on_release: root.cancel()
 
             Button:
                 text: "Load"
@@ -61,3 +62,4 @@
                 text: "Confirm"
             Button:
                 text: "Cancel"
+                on_release: root.cancel()
