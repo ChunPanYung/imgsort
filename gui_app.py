@@ -2,15 +2,15 @@
 import os
 from typing import List
 
+from kivy.uix.widget import Widget
 from kivy.app import App
 from kivy.uix.popup import Popup
-from kivy.uix.boxlayout import BoxLayout
 from dialog_app import LoadDialog, OptionDialog
 
 from bool_collection import BoolCollection
 
 
-class BaseApp(BoxLayout):
+class BaseApp(Widget):
     """ basic class method that will be shared among widgets """
     def __init__(self):
         """ initialization """
@@ -25,12 +25,8 @@ class BaseApp(BoxLayout):
         """ remove/dismiss gui window """
         self._popup.dismiss()
 
-    def load_file(self, path, filename):
-        """ read files then close the load dialog """
-        self.ids.selected_files.text += '\n'.join([os.path.join(path, fn)
-                                                   for fn in filename]) + '\n'
-        # Close the popup windows
-        self.dismiss_popup()
+    def load_file(self, _path, filename):
+        """ empty method """
 
     def show_load(self, _bool: bool):
         """ display load dialog, assign function to load button and cancel button """
@@ -51,6 +47,13 @@ class MainWindow(BaseApp):
     def __init__(self):
         """ class variable & initialization """
         BaseApp.__init__(self)
+
+    def load_file(self, _path, filename):
+        """ Override: read files then close the load dialog """
+        self.ids.selected_files.text += '\n'.join([os.path.join(_path, fn)
+                                                   for fn in filename]) + '\n'
+        # Close the popup windows
+        self.dismiss_popup()
 
     def show_option(self):
         """ option dialog that contains options and select destination directory
