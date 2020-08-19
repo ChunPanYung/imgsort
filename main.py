@@ -75,8 +75,9 @@ def main():
         lst = sort_images.summary(lst, args.PATH, bool_value, limit_size)
         if not lst:
             print('No image files found!  Maybe using it with -r option?')
-        for node in lst:
-            node.to_string()
+        else:
+            for node in lst:
+                node.to_string()
     else:
         sort_images.sort_img(args.PATH[:-1], args.PATH[-1], bool_value,
                              limit_size)
