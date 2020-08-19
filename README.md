@@ -40,12 +40,10 @@ Copy only images with size of 1920x1080 and 1440x2560 from `/home/user/SOURCE` t
 print summary images (numbers and total size), grouped by image size, excluding 1920x1080 and 1440x2560.  It will also open directory in `SOURCE` folder and search any qualified images.
 
 
-## Update [2020-01-07]
-* Add --include and --exclude function
-* Change --dry_run to --summary naming wise
+## Update [2020-08-18]
+* Use PyInstaller to build single executable
 
 ## System Requirement
 * Python 3.7.6
 * Pillow 6.2.1
-* hurry.filesize 0.9
-* KIVY 1.11.1
+* PyInstaller 3.6
