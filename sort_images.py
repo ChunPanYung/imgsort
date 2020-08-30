@@ -6,15 +6,17 @@ import os
 import sys
 import shutil
 from typing import List, Tuple
-from pathlib import Path
 from PIL import Image
 from image_ptr import ImagePtr
 from bool_collection import BoolCollection
+from util import create_dir
+
 
 def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
              limit_size: List[int]) -> bool:
     """
     sort all images to the destination directory
+    will recursively calling itself if -r option is true
     """
 
     for file in files:
@@ -25,7 +27,8 @@ def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
             # Create new directory if not exist
             # directory name is all image with the same size
             new_directory: str = os.path.join(destination,
-                                              str(size[0]) + 'x' + str(size[1]))
+                                              str(size[0]) + 'x' +
+                                              str(size[1]))
             create_dir(new_directory)
             _try_sort(file, new_directory, bool_value)
 
@@ -38,20 +41,19 @@ def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
         # if file is non-directory or image, and bool_value.unknown is true
         elif bool_value.unknown and not os.path.isdir(file):
             # create a new directory if not exist
-            # directory name is always 'unknown' for all unreadable and unknown images
+            # directory name is always 'unknown' for all unreadable
+            # and unknown images
             new_directory: str = os.path.join(destination, 'unknown')
-            create_dir(new_directory)
             _try_sort(file, new_directory, bool_value)
 
     return True
 
 
 def summary(linked_list: List[ImagePtr], files: List[str],
-            bool_value: BoolCollection, limit_size: List[int]) -> List[ImagePtr]:
+            bool_value: BoolCollection,
+            limit_size: List[int]) -> List[ImagePtr]:
     """
-
     summaries the number of images and image size that's moved/copied
-
     Return: lst: List[ImagePtr]
     """
 
@@ -62,8 +64,8 @@ def summary(linked_list: List[ImagePtr], files: List[str],
         # do the following if it's image
         if _limit_img(size, bool_value.include, limit_size):
             added: bool = False
-            for node in linked_list: # Cycle through each node in list
-                if node.is_same(size): # Add img path into node if same size
+            for node in linked_list:  # Cycle through each node in list
+                if node.is_same(size):  # Add img path into node if same size
                     node.increment(os.path.getsize(file))
                     added = True
 
@@ -76,23 +78,10 @@ def summary(linked_list: List[ImagePtr], files: List[str],
             # recursively calling its own function with complete file path
             lst_files: List[str] = [os.path.join(file, file_name)
                                     for file_name in os.listdir(file)]
-            linked_list = summary(linked_list, lst_files, bool_value, limit_size)
+            linked_list = summary(linked_list, lst_files, bool_value,
+                                  limit_size)
 
     return linked_list
-
-
-def create_dir(directory: str) -> bool:
-    """
-        Create from directory:str
-        It will create parent directory if it doesn't exist.
-        It won't throw Exception if directory already exists.
-    """
-    try:
-        Path(directory).mkdir(parents=True, exist_ok=True)
-    except FileExistsError as error:
-        sys.exit(error)
-
-    return True
 
 
 # private function
@@ -141,6 +130,7 @@ def _limit_img(img_size: Tuple[int, int], include: bool,
 
     # Otherwise return True
     return True
+
 
 def _try_sort(file: str, new_directory: str, bool_value: BoolCollection):
     """

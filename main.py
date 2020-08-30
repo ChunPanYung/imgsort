@@ -4,7 +4,7 @@
 This module is mainly used for handling command line arguments,
 and decided which function to call based on arguments.
 """
-
+import os
 import sys
 import argparse
 import re
@@ -12,6 +12,7 @@ from typing import List
 import sort_images
 from image_ptr import ImagePtr
 from bool_collection import BoolCollection
+from util import create_dir
 
 
 def main():
@@ -31,12 +32,14 @@ def main():
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='print detail information')
     parser.add_argument('-s', '--summary', action='store_true',
-                        help='simulate the execution, no file will be moved/copied')
+                        help='simulate the run, no file will be moved/copied')
     parser.add_argument('-i', '--include', action='store', type=str,
-                        help='sorting only certain size indicated by this argument')
+                        help='sorting only certain size indicated by '
+                             'this option')
     parser.add_argument('-e', '--exclude', action='store', type=str,
-                        help='exclude certain image sizes indicated by this argument')
-    parser.add_argument('-u', '--unknown', action='store_true',
+                        help='exclude certain image size indicated by '
+                             'this option')
+    parser.add_argument('--unknown', action='store_true',
                         help='sort all unknown/unreadable images into folder')
 
     # Get all the arguments
@@ -52,11 +55,9 @@ def main():
         if args.verbose:
             print('{}: is created.\n'.format(args.PATH[-1]))
 
-
     # Either args.include or args.exclude, can't have both
     if args.include and args.exclude:
         sys.exit('Either --include or --exclude arguments, cannot have both.')
-
 
     # get the args.include or args.exclude value
     limit_size: List[int] = []
@@ -82,6 +83,10 @@ def main():
             for node in lst:
                 node.to_string()
     else:
+        # if unknown is true, create unknown folder in destination before
+        # sorting
+        if args.unknown:
+            create_dir(os.path.join(args.destination, 'unknown'))
         sort_images.sort_img(args.PATH[:-1], args.PATH[-1], bool_value,
                              limit_size)
 
