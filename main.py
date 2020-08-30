@@ -36,6 +36,8 @@ def main():
                         help='sorting only certain size indicated by this argument')
     parser.add_argument('-e', '--exclude', action='store', type=str,
                         help='exclude certain image sizes indicated by this argument')
+    parser.add_argument('-u', '--unknown', action='store_true',
+                        help='sort all unknown/unreadable images into folder')
 
     # Get all the arguments
     args = parser.parse_args()
@@ -66,8 +68,8 @@ def main():
 
     # Putting all boolean args into one bundle
     bool_value: BoolCollection = BoolCollection(args.recursive, args.copy,
-                                                args.verbose,
-                                                True if args.include else False)
+                                                args.verbose, args.unknown,
+                                                bool(args.include))
 
     # If summary arguments is true, no actual images is sorted
     if args.summary:
@@ -76,6 +78,7 @@ def main():
         if not lst:
             print('No image files found!  Maybe using it with -r option?')
         else:
+            print('\n===SUMMARY===')
             for node in lst:
                 node.to_string()
     else:

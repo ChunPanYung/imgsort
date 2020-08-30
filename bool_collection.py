@@ -9,4 +9,5 @@ class BoolCollection(NamedTuple):
     recursive: bool
     copy: bool
     verbose: bool
+    unknown: bool
     include: bool # False implies exclude is True or no image size limit

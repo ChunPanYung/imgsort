@@ -1,5 +1,5 @@
 """
-This class contains all images who has the same height and width.
+This class is only used when doing summary or dry-run
 """
 import os
 from typing import Tuple

@@ -27,19 +27,7 @@ def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
             new_directory: str = os.path.join(destination,
                                               str(size[0]) + 'x' + str(size[1]))
             create_dir(new_directory)
-            # Move or copy images to new directory
-            # output error if file with same name exists
-            try:
-                if bool_value.copy:
-                    shutil.copy(file, new_directory)
-                    if bool_value.verbose:
-                        print('COPY: "{}"\nTO:   "{}"'.format(file, new_directory))
-                else:
-                    shutil.move(file, new_directory)
-                    if bool_value.verbose:
-                        print('MOVE: "{}"\nTO:   "{}"'.format(file, new_directory))
-            except shutil.Error as error:
-                print('{0}'.format(error), file=sys.stderr)
+            _try_sort(file, new_directory, bool_value)
 
         # If file is directory and recursive is True
         elif bool_value.recursive and os.path.isdir(file):
@@ -47,6 +35,13 @@ def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
             lst_files: List[str] = [os.path.join(file, file_name)
                                     for file_name in os.listdir(file)]
             sort_img(lst_files, destination, bool_value, limit_size)
+        # if file is non-directory or image, and bool_value.unknown is true
+        elif bool_value.unknown and not os.path.isdir(file):
+            # create a new directory if not exist
+            # directory name is always 'unknown' for all unreadable and unknown images
+            new_directory: str = os.path.join(destination, 'unknown')
+            create_dir(new_directory)
+            _try_sort(file, new_directory, bool_value)
 
     return True
 
@@ -146,3 +141,22 @@ def _limit_img(img_size: Tuple[int, int], include: bool,
 
     # Otherwise return True
     return True
+
+def _try_sort(file: str, new_directory: str, bool_value: BoolCollection):
+    """
+    attempt to either copy or move file(s) to new directory(s)
+    output error if file with same name exists
+    """
+    try:
+        if bool_value.copy:
+            shutil.copy(file, new_directory)
+            if bool_value.verbose:
+                print('COPY: "{}"\nTO:   "{}"'.format(file, new_directory))
+        else:
+            shutil.move(file, new_directory)
+            if bool_value.verbose:
+                print('MOVE: "{}"\nTO:   "{}"'.format(file, new_directory))
+    except shutil.Error as error:
+        # output error only if unknown sorting option is false
+        if not bool_value.unknown:
+            print('{0}'.format(error), file=sys.stderr)
