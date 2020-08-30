@@ -16,13 +16,7 @@ from gui_app import GuiApp
 
 
 def main():
-    
-    # If no args is pass (sys.arvs = 1), then GUI mode
-    if len(sys.argv) == 1:
-        GuiApp().run()
-        sys.exit()
-
-    # CLI Here
+    """ main CLI Entry """
     parser = argparse.ArgumentParser()
     # Add positional arguments
     parser.add_argument('PATH', nargs='+',
@@ -73,7 +67,7 @@ def main():
 
     # Putting all boolean args into one bundle
     bool_value: BoolCollection = BoolCollection(args.recursive, args.copy,
-                                                args.verbose, 
+                                                args.verbose,
                                                 True if args.include else False)
 
     # If summary arguments is true, no actual images is sorted
@@ -82,13 +76,13 @@ def main():
         lst = sort_images.summary(lst, args.PATH, bool_value, limit_size)
         if not lst:
             print('No image files found!  Maybe using it with -r option?')
-        for node in lst:
-            node.to_string()
+        else:
+            for node in lst:
+                node.to_string()
     else:
         sort_images.sort_img(args.PATH[:-1], args.PATH[-1], bool_value,
                              limit_size)
 
 
-# execute main() function
 if __name__ == '__main__':
     main()

@@ -115,3 +115,5 @@ sys
 pylintrc
 2q
 *.md.backup
+*.bak
+\\

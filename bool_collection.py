@@ -1,3 +1,4 @@
+""" contains NamedTuple to gather multiple variables into single object """
 from typing import NamedTuple
 
 

@@ -4,6 +4,9 @@ CLI Command use for sorting images.  It will sort all images by size, moving fro
 `DESTINATION` directory. It will create one or more subdirectories in `DESTINATION` directory,
 name of subdirectories is indicated by the image size it will contain, ex: 1920x1080.
 
+## Update [2020-08-18]
+* Use PyInstaller to build single executable
+* Update README.md to include Build Your Own Session
 
 ## Usage
 >usage: imgsort [--options] PATH [PATH...]
@@ -40,11 +43,19 @@ Copy only images with size of 1920x1080 and 1440x2560 from `/home/user/SOURCE` t
 print summary images (numbers and total size), grouped by image size, excluding 1920x1080 and 1440x2560.  It will also open directory in `SOURCE` folder and search any qualified images.
 
 
-## Update [2020-01-07]
-* Add --include and --exclude function
-* Change --dry_run to --summary naming wise
 
 ## System Requirement
-* Python 3.7.3
+* Python 3.7.6
 * Pillow 6.2.1
-* hurry.filesize 0.9
+* PyInstaller 3.6 (for compile into single executable)
+
+**Optional**
+* Pylint
+
+
+## Build Your Own
+1. Download and install Miniconda or Anaconda
+2. create new environment from environment.yml file: 
+> conda env create -f environment.yml
+3. Use Pyinstaller to compile into single executables
+> pyinstaller --clean --onefile --name imgsort main.py
