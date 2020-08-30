@@ -84,6 +84,10 @@ def summary(linked_list: List[ImagePtr], files: List[str],
     return linked_list
 
 
+def sort_unknown_only(bool_value: BoolCollection, files: List[str]) -> bool:
+    return
+
+
 # private function
 def _is_image(file: str) -> Tuple[int, int]:
     """

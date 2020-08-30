@@ -8,7 +8,7 @@ import os
 import sys
 import argparse
 import re
-from typing import List
+from typing import List, Tuple
 import sort_images
 from image_ptr import ImagePtr
 from bool_collection import BoolCollection
@@ -34,30 +34,30 @@ def main():
     parser.add_argument('-s', '--summary', action='store_true',
                         help='simulate the run, no file will be moved/copied')
     parser.add_argument('-i', '--include', action='store', type=str,
-                        help='sorting only certain size indicated by '
-                             'this option')
+                        help='''sorting only certain size indicated by
+                                this option''')
     parser.add_argument('-e', '--exclude', action='store', type=str,
-                        help='exclude certain image size indicated by '
-                             'this option')
+                        help='''exclude certain image size indicated by
+                                this option''')
     parser.add_argument('--unknown', action='store_true',
                         help='sort all unknown/unreadable images into folder')
+    parser.add_argument('--unknownonly', action='store_true',
+                        help='sort only unknown/unreadable images only')
 
-    # Get all the arguments
     args = parser.parse_args()
 
-    # Require at least 2 position arguments if -d is False
-    if not args.summary and len(args.PATH) < 2:
-        sys.exit('Please indicates both SRC and DEST directories')
+    # check error on arguments
+    _check_error(len(args.PATH), args.summary, (args.include, args.exclude),
+                 (args.unknown, args.unknownonly))
 
-    # Create destination directory if not exists and summary is False
+
+    # Create destination directory if not exists
+    # print on-screen if verbose is true
     if not args.summary:
         sort_images.create_dir(args.PATH[-1])
         if args.verbose:
             print('{}: is created.\n'.format(args.PATH[-1]))
 
-    # Either args.include or args.exclude, can't have both
-    if args.include and args.exclude:
-        sys.exit('Either --include or --exclude arguments, cannot have both.')
 
     # get the args.include or args.exclude value
     limit_size: List[int] = []
@@ -72,8 +72,12 @@ def main():
                                                 args.verbose, args.unknown,
                                                 bool(args.include))
 
+    # process image sorting functionality separately if --unknownonly option
+    # is on.
+    if args.unknownonly:
+        sort_images.sort_unknown_only(bool_value, args.PATH)
     # If summary arguments is true, no actual images is sorted
-    if args.summary:
+    elif args.summary:
         lst: List[ImagePtr] = []
         lst = sort_images.summary(lst, args.PATH, bool_value, limit_size)
         if not lst:
@@ -89,6 +93,28 @@ def main():
             create_dir(os.path.join(args.destination, 'unknown'))
         sort_images.sort_img(args.PATH[:-1], args.PATH[-1], bool_value,
                              limit_size)
+
+    # end of main()
+
+
+def  _check_error(length: int, summary: bool, size_limit: Tuple,
+                  unknown_tup: Tuple) -> bool:
+    """
+    Check whether there's enough argument passed for processing image sort
+    also check if there's conflicting argument being passed
+    """
+    # Require at least 2 position arguments if -d is False
+    if not summary and length < 2:
+        sys.exit('Please indicates both SRC and DEST directories')
+    # Either args.include or args.exclude, can't have both
+    if size_limit[0] and size_limit[1]:
+        sys.exit('Either --include or --exclude option, cannot have both.')
+    # Either args.unknown or args.unknownonly
+    if unknown_tup[0] and unknown_tup[1]:
+        sys.exit('Either --unknown or --unknownonly option, cannot have both.')
+
+
+    return True
 
 
 if __name__ == '__main__':
