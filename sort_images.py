@@ -19,9 +19,9 @@ def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
     will recursively calling itself if -r option is true
     """
 
-    for file in files:
+    for _file in files:
         # get the image width and size
-        size: Tuple[int, int] = _is_image(file)
+        size: Tuple[int, int] = _is_image(_file)
         # sort to destination if it's image
         if _limit_img(size, bool_value.include, limit_size):
             # Create new directory if not exist
@@ -30,21 +30,21 @@ def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
                                               str(size[0]) + 'x' +
                                               str(size[1]))
             create_dir(new_directory)
-            _try_sort(file, new_directory, bool_value)
+            _try_sort(_file, new_directory, bool_value)
 
         # If file is directory and recursive is True
-        elif bool_value.recursive and os.path.isdir(file):
+        elif bool_value.recursive and os.path.isdir(_file):
             # recursively calling its own function with complete file path
-            lst_files: List[str] = [os.path.join(file, file_name)
-                                    for file_name in os.listdir(file)]
+            lst_files: List[str] = [os.path.join(_file, file_name)
+                                    for file_name in os.listdir(_file)]
             sort_img(lst_files, destination, bool_value, limit_size)
         # if file is non-directory or image, and bool_value.unknown is true
-        elif bool_value.unknown and not os.path.isdir(file):
+        elif bool_value.unknown and not os.path.isdir(_file):
             # create a new directory if not exist
             # directory name is always 'unknown' for all unreadable
             # and unknown images
             new_directory: str = os.path.join(destination, 'unknown')
-            _try_sort(file, new_directory, bool_value)
+            _try_sort(_file, new_directory, bool_value)
 
     return True
 
@@ -58,38 +58,64 @@ def summary(linked_list: List[ImagePtr], files: List[str],
     """
 
     # Cycle through each file
-    for file in files:
+    for _file in files:
         # get the image width and height
-        size: Tuple[int, int] = _is_image(file)
-        # do the following if it's image
+        size: Tuple[int, int] = _is_image(_file)
+        # do the following if it's image and its size is included
         if _limit_img(size, bool_value.include, limit_size):
-            added: bool = False
-            for node in linked_list:  # Cycle through each node in list
-                if node.is_same(size):  # Add img path into node if same size
-                    node.increment(os.path.getsize(file))
-                    added = True
-
-            # Create new node if it's not added to the current nodes
-            if not added:
-                linked_list.append(ImagePtr(size[0], size[1], file))
-
+            _add_linked_list(linked_list, size, _file)
+        # do the following if it's non-image and --unknown option is flaged
+        elif size == (0, 0) and bool_value.unknown:
+            _add_linked_list(linked_list, size, _file)
         # if it's directory and recursive is on:
-        elif bool_value.recursive and os.path.isdir(file):
+        elif bool_value.recursive and os.path.isdir(_file):
             # recursively calling its own function with complete file path
-            lst_files: List[str] = [os.path.join(file, file_name)
-                                    for file_name in os.listdir(file)]
+            lst_files: List[str] = [os.path.join(_file, file_name)
+                                    for file_name in os.listdir(_file)]
             linked_list = summary(linked_list, lst_files, bool_value,
                                   limit_size)
 
     return linked_list
 
 
-def sort_unknown_only(bool_value: BoolCollection, files: List[str]) -> bool:
-    return
+def unknown_only(result: List[int], src: List[str], dest: str, _summary: bool,
+                 bool_value: BoolCollection) -> List[int]:
+    """ Sort unknown images only.
+        Depends on whether --recursive, --verbose, --summary is active or not.
+        All path is treat as source if --summary is active.
+        Exclude directory.
+
+        Args result: [0] is total number of non-image files,
+                  [1] is total file size.
+        return List: [0] is total number of non-image files,
+                      [1] is total file size.
+        If the return Tuple is [0, 0], it means no non-image files, or
+        --summary is off.
+    """
+    # cycle through each source
+    for _file in src:
+        # if it's directory and recursive is on
+        if os.path.isdir(_file) and bool_value.recursive:
+            # recrusively calling itself with complete file path
+            # and content of directory
+            lst_files: List[str] = [os.path.join(_file, file_name)
+                                    for file_name in os.listdir(_file)]
+            result = unknown_only(result, lst_files, src, _summary, bool_value)
+        # if file is not image or directory
+        elif _is_image(_file) == (0, 0) and not os.path.isdir(_file):
+            # Add all file size together and number of non-image file
+            # if summary option is on.
+            if _summary:
+                result[0] += 1
+                result[1] += os.path.getsize(_file)
+            else:
+                _try_sort(_file, dest, bool_value)
+
+    return result
 
 
 # private function
-def _is_image(file: str) -> Tuple[int, int]:
+def _is_image(_file: str) -> Tuple[int, int]:
     """
     verify whether it's image or not
 
@@ -97,7 +123,7 @@ def _is_image(file: str) -> Tuple[int, int]:
     Return emtpy Tuple if no
     """
     try:
-        with Image.open(file) as img:
+        with Image.open(_file) as img:
             return img.size
     except IOError:
         return (0, 0)
@@ -136,21 +162,36 @@ def _limit_img(img_size: Tuple[int, int], include: bool,
     return True
 
 
-def _try_sort(file: str, new_directory: str, bool_value: BoolCollection):
+def _try_sort(_file: str, new_directory: str, bool_value: BoolCollection):
     """
     attempt to either copy or move file(s) to new directory(s)
     output error if file with same name exists
     """
     try:
         if bool_value.copy:
-            shutil.copy(file, new_directory)
+            shutil.copy(_file, new_directory)
             if bool_value.verbose:
-                print('COPY: "{}"\nTO:   "{}"'.format(file, new_directory))
+                print('COPY: "{}"\nTO:   "{}"'.format(_file, new_directory))
         else:
-            shutil.move(file, new_directory)
+            shutil.move(_file, new_directory)
             if bool_value.verbose:
-                print('MOVE: "{}"\nTO:   "{}"'.format(file, new_directory))
+                print('MOVE: "{}"\nTO:   "{}"'.format(_file, new_directory))
     except shutil.Error as error:
         # output error only if unknown sorting option is false
         if not bool_value.unknown:
             print('{0}'.format(error), file=sys.stderr)
+
+
+def _add_linked_list(linked_list: List[ImagePtr], size: Tuple[int],
+                     _file: str) -> List[ImagePtr]:
+    added: bool = False
+    for node in linked_list:  # Cycle through each node in list
+        if node.is_same(size):  # Add img path into node if same size
+            node.increment(os.path.getsize(_file))
+            added = True
+
+    # Create new node if it's not added to the current nodes
+    if not added:
+        linked_list.append(ImagePtr(size[0], size[1], _file))
+
+    return linked_list

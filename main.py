@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """
 This module is mainly used for handling command line arguments,
 and decided which function to call based on arguments.
@@ -12,7 +10,7 @@ from typing import List, Tuple
 import sort_images
 from image_ptr import ImagePtr
 from bool_collection import BoolCollection
-from util import create_dir
+import util
 
 
 def main():
@@ -33,6 +31,8 @@ def main():
                         help='print detail information')
     parser.add_argument('-s', '--summary', action='store_true',
                         help='simulate the run, no file will be moved/copied')
+    parser.add_argument('-d', '--dry-run', action='store_true',
+                        help='same as --summary option')
     parser.add_argument('-i', '--include', action='store', type=str,
                         help='''sorting only certain size indicated by
                                 this option''')
@@ -50,11 +50,13 @@ def main():
     _check_error(len(args.PATH), args.summary, (args.include, args.exclude),
                  (args.unknown, args.unknownonly))
 
+    # flag --summary if --dry-run is flaged
+    args.summary = bool(args.dry_run)
 
     # Create destination directory if not exists
     # print on-screen if verbose is true
     if not args.summary:
-        sort_images.create_dir(args.PATH[-1])
+        util.create_dir(args.PATH[-1])
         if args.verbose:
             print('{}: is created.\n'.format(args.PATH[-1]))
 
@@ -74,8 +76,18 @@ def main():
 
     # process image sorting functionality separately if --unknownonly option
     # is on.
+    # it will process whethere --summary option is on or off
     if args.unknownonly:
-        sort_images.sort_unknown_only(bool_value, args.PATH)
+        # src and dest will change depends on flag args.summary
+        src: str = args.PATH[:-1] if not args.summary else args.PATH
+        dest: str = args.PATH[-1] if not args.summary else ''
+        result: List[int] = sort_images.unknown_only([0, 0], src, dest,
+                                                     args.summary,
+                                                     bool_value)
+        # print out info if --summary is flaged
+        if args.summary:
+            print('-Total numbers: {}'.format(result[0]))
+            print('-Total size: {}\n'.format(util.sizeof_fmt(result[1])))
     # If summary arguments is true, no actual images is sorted
     elif args.summary:
         lst: List[ImagePtr] = []
@@ -90,7 +102,7 @@ def main():
         # if unknown is true, create unknown folder in destination before
         # sorting
         if args.unknown:
-            create_dir(os.path.join(args.destination, 'unknown'))
+            util.create_dir(os.path.join(args.destination, 'unknown'))
         sort_images.sort_img(args.PATH[:-1], args.PATH[-1], bool_value,
                              limit_size)
 
