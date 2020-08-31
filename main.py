@@ -10,12 +10,7 @@ from typing import List, Tuple
 import sort_images
 from image_ptr import ImagePtr
 from bool_collection import BoolCollection
-<<<<<<< HEAD
-from gui_app import GuiApp
-||||||| 8ae797f
-=======
 import util
->>>>>>> dev
 
 
 def main():
