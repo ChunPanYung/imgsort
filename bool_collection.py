@@ -10,4 +10,5 @@ class BoolCollection(NamedTuple):
     copy: bool
     verbose: bool
     unknown: bool
+    more: int
     include: bool  # False implies exclude is True or no image size limit

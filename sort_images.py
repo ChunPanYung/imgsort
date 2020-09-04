@@ -64,9 +64,6 @@ def summary(linked_list: List[ImagePtr], files: List[str],
         # do the following if it's image and its size is included
         if _limit_img(size, bool_value.include, limit_size):
             _add_linked_list(linked_list, size, _file)
-        # do the following if it's non-image and --unknown option is flaged
-        elif size == (0, 0) and bool_value.unknown:
-            _add_linked_list(linked_list, size, _file)
         # if it's directory and recursive is on:
         elif bool_value.recursive and os.path.isdir(_file):
             # recursively calling its own function with complete file path
@@ -74,6 +71,9 @@ def summary(linked_list: List[ImagePtr], files: List[str],
                                     for file_name in os.listdir(_file)]
             linked_list = summary(linked_list, lst_files, bool_value,
                                   limit_size)
+        # do the following if it's non-image and --unknown option is flaged
+        elif size == (0, 0) and bool_value.unknown:
+            _add_linked_list(linked_list, size, _file)
 
     return linked_list
 
@@ -100,7 +100,7 @@ def unknown_only(result: List[int], src: List[str], dest: str, _summary: bool,
             # and content of directory
             lst_files: List[str] = [os.path.join(_file, file_name)
                                     for file_name in os.listdir(_file)]
-            result = unknown_only(result, lst_files, src, _summary, bool_value)
+            result = unknown_only(result, lst_files, dest, _summary, bool_value)
         # if file is not image or directory
         elif _is_image(_file) == (0, 0) and not os.path.isdir(_file):
             # Add all file size together and number of non-image file

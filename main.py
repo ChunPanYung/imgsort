@@ -2,7 +2,6 @@
 This module is mainly used for handling command line arguments,
 and decided which function to call based on arguments.
 """
-import os
 import sys
 import argparse
 import re
@@ -24,55 +23,56 @@ def main():
 
     # Add optional arguments
     parser.add_argument('-r', '--recursive', action='store_true',
-                        help='get all images from subsequent directories')
+                        help='Get all images from subsequent directories.')
     parser.add_argument('-c', '--copy', action='store_true',
-                        help='copy instead of move image files')
+                        help='Copy instead of move image files.')
     parser.add_argument('-v', '--verbose', action='store_true',
-                        help='print detail information')
+                        help='Print detail information.')
     parser.add_argument('-s', '--summary', action='store_true',
-                        help='simulate the run, no file will be moved/copied')
+                        help='Simulate the run, no file will be moved/copied.')
     parser.add_argument('-d', '--dry-run', action='store_true',
-                        help='same as --summary option')
+                        help='Same as --summary option.')
     parser.add_argument('-i', '--include', action='store', type=str,
-                        help='''sorting only certain size indicated by
-                                this option''')
+                        help='''Sorting only certain size indicated by
+                                this option.''')
     parser.add_argument('-e', '--exclude', action='store', type=str,
-                        help='''exclude certain image size indicated by
-                                this option''')
+                        help='''Exclude certain image size indicated by
+                                this option.''')
+    parser.add_argument('-m', '--more', action='store', type=int,
+                        help='''Sort only if image of said size is more than
+                                X number.''')
     parser.add_argument('--unknown', action='store_true',
-                        help='sort all unknown/unreadable images into folder')
+                        help='Sort all unknown/unreadable images into folder.')
     parser.add_argument('--unknownonly', action='store_true',
-                        help='sort only unknown/unreadable images only')
+                        help='Sort only unknown/unreadable images only.')
 
     args = parser.parse_args()
+
+
+    # Putting all boolean args into one bundle
+    bool_value: BoolCollection = BoolCollection(args.recursive, args.copy,
+                                                args.verbose, args.unknown,
+                                                args.more, bool(args.include))
+
 
     # check error on arguments
     _check_error(len(args.PATH), args.summary, (args.include, args.exclude),
                  (args.unknown, args.unknownonly))
 
     # flag --summary if --dry-run is flaged
-    args.summary = bool(args.dry_run)
+    if args.dry_run:
+        args.summary = args.dry_run
 
     # Create destination directory if not exists
-    # print on-screen if verbose is true
     if not args.summary:
         util.create_dir(args.PATH[-1])
-        if args.verbose:
-            print('{}: is created.\n'.format(args.PATH[-1]))
 
 
     # get the args.include or args.exclude value
-    limit_size: List[int] = []
+    limit_size: List[int] = [int(num) for num in
+                             re.split('[x,]', str(args.include or '') +
+                                      str(args.exclude or ''))]
 
-    if args.include:
-        limit_size = [int(num) for num in re.split('[x,]', args.include)]
-    elif args.exclude:
-        limit_size = [int(num) for num in re.split('[x,]', args.exclude)]
-
-    # Putting all boolean args into one bundle
-    bool_value: BoolCollection = BoolCollection(args.recursive, args.copy,
-                                                args.verbose, args.unknown,
-                                                bool(args.include))
 
     # process image sorting functionality separately if --unknownonly option
     # is on.
@@ -99,10 +99,6 @@ def main():
             for node in lst:
                 node.to_string()
     else:
-        # if unknown is true, create unknown folder in destination before
-        # sorting
-        if args.unknown:
-            util.create_dir(os.path.join(args.destination, 'unknown'))
         sort_images.sort_img(args.PATH[:-1], args.PATH[-1], bool_value,
                              limit_size)
 
