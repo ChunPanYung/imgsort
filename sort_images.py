@@ -3,15 +3,13 @@ This module will only contain functions that manipulates class ImageInfo
 in linked list.
 """
 import os
-import sys
-import shutil
 from typing import List, Tuple
 from PIL import Image
 from image_info import ImageInfo
 from bool_collection import BoolCollection
-from util import create_dir
+from util import create_dir, move_file
 
-
+# TODO: add --more function here
 def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
              limit_size: List[int]) -> bool:
     """
@@ -30,7 +28,7 @@ def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
                                               str(size[0]) + 'x' +
                                               str(size[1]))
             create_dir(new_directory)
-            _try_sort(_file, new_directory, bool_value)
+            move_file(_file, new_directory, bool_value)
 
         # If file is directory and recursive is True
         elif bool_value.recursive and os.path.isdir(_file):
@@ -44,7 +42,7 @@ def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
             # directory name is always 'unknown' for all unreadable
             # and unknown images
             new_directory: str = os.path.join(destination, 'unknown')
-            _try_sort(_file, new_directory, bool_value)
+            move_file(_file, new_directory, bool_value)
 
     return True
 
@@ -108,7 +106,7 @@ def unknown_only(result: ImageInfo, src: List[str], dest: str, _summary: bool,
             if _summary:
                 result.increment(_file)
             else:
-                _try_sort(_file, dest, bool_value)
+                move_file(_file, dest, bool_value)
 
     return result
 
@@ -159,26 +157,6 @@ def _limit_img(img_size: Tuple[int, int], include: bool,
 
     # Otherwise return True
     return True
-
-
-def _try_sort(_file: str, new_directory: str, bool_value: BoolCollection):
-    """
-    attempt to either copy or move file(s) to new directory(s)
-    output error if file with same name exists
-    """
-    try:
-        if bool_value.copy:
-            shutil.copy(_file, new_directory)
-            if bool_value.verbose:
-                print('COPY: "{}"\nTO:   "{}"'.format(_file, new_directory))
-        else:
-            shutil.move(_file, new_directory)
-            if bool_value.verbose:
-                print('MOVE: "{}"\nTO:   "{}"'.format(_file, new_directory))
-    except shutil.Error as error:
-        # output error only if unknown sorting option is false
-        if not bool_value.unknown:
-            print('{0}'.format(error), file=sys.stderr)
 
 
 def _add_linked_list(linked_list: List[ImageInfo], size: Tuple[int],

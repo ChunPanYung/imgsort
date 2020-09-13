@@ -2,7 +2,6 @@
 Static class for keeping checking of image file path and number of images who
 share the same size.
 """
-import os
 from typing import List, Tuple
 from image_info import ImageInfo
 
