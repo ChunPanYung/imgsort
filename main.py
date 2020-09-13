@@ -68,10 +68,12 @@ def main():
         util.create_dir(args.PATH[-1])
 
 
-    # get the args.include or args.exclude value
-    limit_size: List[int] = [int(num) for num in
-                             re.split('[x,]', str(args.include or '') +
-                                      str(args.exclude or ''))]
+    limit_size: List[int] = []
+    # get the args.include or args.exclude value if one of them is non-empty
+    if args.include or args.exclude:
+        limit_size = [int(num) for num in
+                      re.split('[x,]', (args.include or '') +
+                               (args.exclude or ''))]
 
 
     # process image sorting functionality separately if --unknownonly option
@@ -81,7 +83,7 @@ def main():
         # src and dest will change depends on flag args.summary
         src: str = args.PATH[:-1] if not args.summary else args.PATH
         dest: str = args.PATH[-1] if not args.summary else ''
-        result: ImageInfo = sort_images.unknown_only(new ImageInfo(0, 0), src,
+        result: ImageInfo = sort_images.unknown_only(ImageInfo(0, 0), src,
                                                      dest, args.summary,
                                                      bool_value)
         # print out info if --summary is flaged

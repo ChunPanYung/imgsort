@@ -79,7 +79,7 @@ def summary(linked_list: List[ImageInfo], files: List[str],
 
 
 def unknown_only(result: ImageInfo, src: List[str], dest: str, _summary: bool,
-                 bool_value: BoolCollection) -> List[int]:
+                 bool_value: BoolCollection) -> ImageInfo:
     """ Sort unknown images only.
         Depends on whether --recursive, --verbose, --summary is active or not.
         All path is treat as source if --summary is active.
