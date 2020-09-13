@@ -11,13 +11,17 @@ class ImageInfo():
     This class contains all images who has the same height and width.
     """
 
-    def __init__(self, width, height, file: str):
+
+    def __init__(self, width: int, height: int, _file: str = None):
         self.width: int = width
         self.height: int = height
         # num of image with same width and height
         self.num: int = 1
         # total size(bytes) of all images who share the same width and height
-        self.total_size: int = os.path.getsize(file)
+        if _file is None:
+            self.total_size: int = 0
+        else:
+            self.total_size: int = os.path.getsize(_file)
 
     def get_width(self) -> int:
         """ return the width of image : int """
