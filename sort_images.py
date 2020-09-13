@@ -78,7 +78,7 @@ def summary(linked_list: List[ImageInfo], files: List[str],
     return linked_list
 
 
-def unknown_only(result: List[int], src: List[str], dest: str, _summary: bool,
+def unknown_only(result: ImageInfo, src: List[str], dest: str, _summary: bool,
                  bool_value: BoolCollection) -> List[int]:
     """ Sort unknown images only.
         Depends on whether --recursive, --verbose, --summary is active or not.
@@ -106,8 +106,7 @@ def unknown_only(result: List[int], src: List[str], dest: str, _summary: bool,
             # Add all file size together and number of non-image file
             # if summary option is on.
             if _summary:
-                result[0] += 1
-                result[1] += os.path.getsize(_file)
+                result.increment(_file)
             else:
                 _try_sort(_file, dest, bool_value)
 
@@ -187,7 +186,7 @@ def _add_linked_list(linked_list: List[ImageInfo], size: Tuple[int],
     added: bool = False
     for node in linked_list:  # Cycle through each node in list
         if node.is_same(size):  # Add img path into node if same size
-            node.increment(os.path.getsize(_file))
+            node.increment(_file)
             added = True
 
     # Create new node if it's not added to the current nodes

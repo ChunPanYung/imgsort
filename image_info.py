@@ -42,10 +42,10 @@ class ImageInfo():
 
         return self.total_size
 
-    def increment(self, img_size: int) -> bool:
+    def increment(self, _file: str) -> bool:
         """ increment the number by image by one and total_size by img_size """
         self.num += 1
-        self.total_size += img_size
+        self.total_size += os.path.getsize(_file)
         return True
 
     def is_same(self, tup: Tuple[int, int]) -> bool:

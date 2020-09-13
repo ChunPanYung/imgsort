@@ -81,8 +81,8 @@ def main():
         # src and dest will change depends on flag args.summary
         src: str = args.PATH[:-1] if not args.summary else args.PATH
         dest: str = args.PATH[-1] if not args.summary else ''
-        result: List[int] = sort_images.unknown_only([0, 0], src, dest,
-                                                     args.summary,
+        result: ImageInfo = sort_images.unknown_only(new ImageInfo(0, 0), src,
+                                                     dest, args.summary,
                                                      bool_value)
         # print out info if --summary is flaged
         if args.summary:

@@ -50,7 +50,7 @@ class ImageNum():
             # if they are the same size, number value increase by 1,
             # record file path
             if node.is_same(size):
-                node.increment(os.path.getsize(file_path))
+                node.increment(file_path)
                 ImageNum.path[index].append(file_path)
                 is_append = True
         # if is_append: bool is still false, it means that we need to create a
