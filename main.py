@@ -88,13 +88,7 @@ def main():
                                                      bool_value)
         # print out info if --summary is flaged
         if args.summary:
-            # if --more option is flaged
-            if not args.more:
-                print('-Total numbers: {}'.format(result[0]))
-                print('-Total size: {}\n'.format(util.sizeof_fmt(result[1])))
-            elif args.more < result[0]:
-                print('-Total numbers: {}'.format(result[0]))
-                print('-Total size: {}\n'.format(util.sizeof_fmt(result[1])))
+            _print_screen(result, args.more)
     # If summary arguments is true, no actual images is sorted
     elif args.summary:
         lst: List[ImageInfo] = []
@@ -105,13 +99,7 @@ def main():
         else:
             print('\n===SUMMARY===')
             for node in lst:
-                # if --more option is not on
-                if not args.more:
-                    node.to_string()
-                # otherwise print on-screen only if image total is more than
-                # the said flag
-                elif args.more < node.get_num():
-                    node.to_string()
+                _print_screen(node, args.more)
     else:
         sort_images.sort_img(args.PATH[:-1], args.PATH[-1], bool_value,
                              limit_size)
@@ -137,6 +125,20 @@ def  _check_error(length: int, summary: bool, size_limit: Tuple,
 
 
     return True
+
+def _print_screen(image_info: ImageInfo, more: int):
+    """
+    print ImageInfo on_screen depends on whether more is True or
+    False (0, negative or None)
+    """
+    # if --more option is flaged
+    if not more:
+        image_info.to_string()
+    # otherwise print on-screen only if image total is more than
+    # the said flag
+    elif more < image_info.get_num():
+        image_info.to_string()
+
 
 
 if __name__ == '__main__':
