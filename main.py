@@ -86,8 +86,13 @@ def main():
                                                      bool_value)
         # print out info if --summary is flaged
         if args.summary:
-            print('-Total numbers: {}'.format(result[0]))
-            print('-Total size: {}\n'.format(util.sizeof_fmt(result[1])))
+            # if --more option is flaged
+            if not args.more:
+                print('-Total numbers: {}'.format(result[0]))
+                print('-Total size: {}\n'.format(util.sizeof_fmt(result[1])))
+            elif args.more < result[0]:
+                print('-Total numbers: {}'.format(result[0]))
+                print('-Total size: {}\n'.format(util.sizeof_fmt(result[1])))
     # If summary arguments is true, no actual images is sorted
     elif args.summary:
         lst: List[ImageInfo] = []
