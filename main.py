@@ -57,7 +57,7 @@ def main():
 
     # check error on arguments
     _check_error(len(args.PATH), args.summary, (args.include, args.exclude),
-                 (args.unknown, args.unknownonly), args.more)
+                 (args.unknown, args.unknownonly))
 
     # flag --summary if --dry-run is flaged
     if args.dry_run:
@@ -93,7 +93,8 @@ def main():
         lst: List[ImageInfo] = []
         lst = sort_images.summary(lst, args.PATH, bool_value, limit_size)
         if not lst:
-            print('No image files found!  Maybe using it with -r option?')
+            print('''No image files found!  Maybe using it with --recursive
+                     option?''')
         else:
             print('\n===SUMMARY===')
             for node in lst:
@@ -112,7 +113,7 @@ def main():
 
 
 def  _check_error(length: int, summary: bool, size_limit: Tuple,
-                  unknown_tup: Tuple, more: int) -> bool:
+                  unknown_tup: Tuple) -> bool:
     """
     Check whether there's enough argument passed for processing image sort
     also check if there's conflicting argument being passed
@@ -126,10 +127,6 @@ def  _check_error(length: int, summary: bool, size_limit: Tuple,
     # Either args.unknown or args.unknownonly
     if unknown_tup[0] and unknown_tup[1]:
         sys.exit('Either --unknown or --unknownonly option, cannot have both.')
-    # --more flag should only works with --include or --exclude flag
-    if not (more and (size_limit[0] or size_limit[1])):
-        sys.exit('''--more option should be used with either --include or
-                    --exclude, and it can\'t be 0 or less.''')
 
 
     return True
