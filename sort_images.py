@@ -1,5 +1,5 @@
 """
-This module will only contain functions that manipulates class ImagePtr
+This module will only contain functions that manipulates class ImageInfo
 in linked list.
 """
 import os
@@ -7,7 +7,7 @@ import sys
 import shutil
 from typing import List, Tuple
 from PIL import Image
-from image_ptr import ImagePtr
+from image_info import ImageInfo
 from bool_collection import BoolCollection
 from util import create_dir
 
@@ -49,12 +49,12 @@ def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
     return True
 
 
-def summary(linked_list: List[ImagePtr], files: List[str],
+def summary(linked_list: List[ImageInfo], files: List[str],
             bool_value: BoolCollection,
-            limit_size: List[int]) -> List[ImagePtr]:
+            limit_size: List[int]) -> List[ImageInfo]:
     """
     summaries the number of images and image size that's moved/copied
-    Return: lst: List[ImagePtr]
+    Return: lst: List[ImageInfo]
     """
 
     # Cycle through each file
@@ -182,8 +182,8 @@ def _try_sort(_file: str, new_directory: str, bool_value: BoolCollection):
             print('{0}'.format(error), file=sys.stderr)
 
 
-def _add_linked_list(linked_list: List[ImagePtr], size: Tuple[int],
-                     _file: str) -> List[ImagePtr]:
+def _add_linked_list(linked_list: List[ImageInfo], size: Tuple[int],
+                     _file: str) -> List[ImageInfo]:
     added: bool = False
     for node in linked_list:  # Cycle through each node in list
         if node.is_same(size):  # Add img path into node if same size
@@ -192,6 +192,6 @@ def _add_linked_list(linked_list: List[ImagePtr], size: Tuple[int],
 
     # Create new node if it's not added to the current nodes
     if not added:
-        linked_list.append(ImagePtr(size[0], size[1], _file))
+        linked_list.append(ImageInfo(size[0], size[1], _file))
 
     return linked_list

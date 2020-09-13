@@ -6,7 +6,7 @@ from typing import Tuple
 from util import sizeof_fmt
 
 
-class ImagePtr():
+class ImageInfo():
     """
     This class contains all images who has the same height and width.
     """

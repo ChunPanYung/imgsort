@@ -7,7 +7,7 @@ import argparse
 import re
 from typing import List, Tuple
 import sort_images
-from image_ptr import ImagePtr
+from image_info import ImageInfo
 from bool_collection import BoolCollection
 import util
 
@@ -90,7 +90,7 @@ def main():
             print('-Total size: {}\n'.format(util.sizeof_fmt(result[1])))
     # If summary arguments is true, no actual images is sorted
     elif args.summary:
-        lst: List[ImagePtr] = []
+        lst: List[ImageInfo] = []
         lst = sort_images.summary(lst, args.PATH, bool_value, limit_size)
         if not lst:
             print('No image files found!  Maybe using it with -r option?')
