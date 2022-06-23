@@ -32,7 +32,6 @@ name of subdirectories is indicated by the image size it will contain, ex: 1920x
 Move and sort all the images in folder `SOURCE`, excluding subdirectories, and moving
 them to `/home/user/DESTINATION`.  `-v` indicates it will print out details information on screen.
 
-
 > imgsort --include=1920x1080,1440x2560 --recursive  --copy /home/user/unsorted_imgs /home/user/sorted
 
 Copy only images with size of 1920x1080 and 1440x2560 from `/home/user/SOURCE` to
@@ -42,16 +41,10 @@ Copy only images with size of 1920x1080 and 1440x2560 from `/home/user/SOURCE` t
 
 print summary images (numbers and total size), grouped by image size, excluding 1920x1080 and 1440x2560.  It will also open directory in `SOURCE` folder and search any qualified images.
 
-
-
 ## System Requirement
-* Python 3.7.6
-* Pillow 6.2.1
-* PyInstaller 3.6 (for compile into single executable)
-
-**Optional**
-* Pylint
-
+* Python 3.10.*
+* Pillow 9.1.1
+* PyInstaller 5.1 (for compile into single executable)
 
 ## Build Your Own
 1. Download and install Miniconda or Anaconda

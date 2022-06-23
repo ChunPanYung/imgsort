@@ -39,7 +39,6 @@ class ImageInfo():
         """ return total size of images who share the same width and height
             return int is in bytes size
         """
-
         return self.total_size
 
     def increment(self, _file: str) -> bool:

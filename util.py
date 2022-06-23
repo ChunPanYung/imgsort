@@ -47,6 +47,4 @@ def move_file(_file: str, new_directory: str, bool_value: BoolCollection):
             if bool_value.verbose:
                 print('MOVE: "{}"\nTO:   "{}"'.format(_file, new_directory))
     except shutil.Error as error:
-        # output error only if unknown sorting option is false
-        if not bool_value.unknown:
-            print('{0}'.format(error), file=sys.stderr)
+        print('{0}'.format(error), file=sys.stderr)

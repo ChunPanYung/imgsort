@@ -36,14 +36,6 @@ def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
             lst_files: List[str] = [os.path.join(_file, file_name)
                                     for file_name in os.listdir(_file)]
             sort_img(lst_files, destination, bool_value, limit_size)
-        # if file is non-directory or image, and bool_value.unknown is true
-        elif bool_value.unknown and not os.path.isdir(_file):
-            # create a new directory if not exist
-            # directory name is always 'unknown' for all unreadable
-            # and unknown images
-            new_directory: str = os.path.join(destination, 'unknown')
-            move_file(_file, new_directory, bool_value)
-
     return True
 
 
@@ -69,47 +61,11 @@ def summary(linked_list: List[ImageInfo], files: List[str],
                                     for file_name in os.listdir(_file)]
             linked_list = summary(linked_list, lst_files, bool_value,
                                   limit_size)
-        # do the following if it's non-image and --unknown option is flaged
-        elif size == (0, 0) and bool_value.unknown:
+        # do the following if it's non-image or it cannot read the size
+        elif size == (0, 0):
             _add_linked_list(linked_list, size, _file)
 
     return linked_list
-
-
-def unknown_only(result: ImageInfo, src: List[str], dest: str, _summary: bool,
-                 bool_value: BoolCollection) -> ImageInfo:
-    """ Sort unknown images only.
-        Depends on whether --recursive, --verbose, --summary is active or not.
-        All path is treat as source if --summary is active.
-        Exclude directory.
-
-        Args result: [0] is total number of non-image files,
-                  [1] is total file size.
-        return List: [0] is total number of non-image files,
-                      [1] is total file size.
-        If the return Tuple is [0, 0], it means no non-image files, or
-        --summary is off.
-    """
-    # cycle through each source
-    for _file in src:
-        # if it's directory and recursive is on
-        if os.path.isdir(_file) and bool_value.recursive:
-            # recrusively calling itself with complete file path
-            # and content of directory
-            lst_files: List[str] = [os.path.join(_file, file_name)
-                                    for file_name in os.listdir(_file)]
-            result = unknown_only(result, lst_files, dest, _summary, bool_value)
-        # if file is not image or directory
-        elif _is_image(_file) == (0, 0) and not os.path.isdir(_file):
-            # Add all file size together and number of non-image file
-            # if summary option is on.
-            if _summary:
-                result.increment(_file)
-            else:
-                move_file(_file, dest, bool_value)
-
-    return result
-
 
 # private function
 def _is_image(_file: str) -> Tuple[int, int]:
@@ -169,6 +125,6 @@ def _add_linked_list(linked_list: List[ImageInfo], size: Tuple[int],
 
     # Create new node if it's not added to the current nodes
     if not added:
-        linked_list.append(ImageInfo(size[0], size[1], _file))
+        linked_list.append(ImageInfo(size[-1], size[1], _file))
 
     return linked_list

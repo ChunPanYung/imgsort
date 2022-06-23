@@ -41,23 +41,17 @@ def main():
     parser.add_argument('-m', '--more', action='store', type=int,
                         help='''Sort only if image of said size is more than
                                 X number.''')
-    parser.add_argument('--unknown', action='store_true',
-                        help='Sort all unknown/unreadable images into folder.')
-    parser.add_argument('--unknownonly', action='store_true',
-                        help='Sort only unknown/unreadable images only.')
 
     args = parser.parse_args()
 
 
     # Putting all boolean args into one bundle
     bool_value: BoolCollection = BoolCollection(args.recursive, args.copy,
-                                                args.verbose, args.unknown,
+                                                args.verbose,
                                                 args.more, bool(args.include))
 
-
     # check error on arguments
-    _check_error(len(args.PATH), args.summary, (args.include, args.exclude),
-                 (args.unknown, args.unknownonly))
+    _check_error(len(args.PATH), args.summary, (args.include, args.exclude))
 
     # flag --summary if --dry-run is flaged
     if args.dry_run:
@@ -76,21 +70,8 @@ def main():
                                (args.exclude or ''))]
 
 
-    # process image sorting functionality separately if --unknownonly option
-    # is on.
-    # it will process whethere --summary option is on or off
-    if args.unknownonly:
-        # src and dest will change depends on flag args.summary
-        src: str = args.PATH[:-1] if not args.summary else args.PATH
-        dest: str = args.PATH[-1] if not args.summary else ''
-        result: ImageInfo = sort_images.unknown_only(ImageInfo(0, 0), src,
-                                                     dest, args.summary,
-                                                     bool_value)
-        # print out info if --summary is flaged
-        if args.summary:
-            _print_screen(result, args.more)
     # If summary arguments is true, no actual images is sorted
-    elif args.summary:
+    if args.summary:
         lst: List[ImageInfo] = []
         lst = sort_images.summary(lst, args.PATH, bool_value, limit_size)
         if not lst:
@@ -107,8 +88,7 @@ def main():
     # end of main()
 
 
-def  _check_error(length: int, summary: bool, size_limit: Tuple,
-                  unknown_tup: Tuple) -> bool:
+def  _check_error(length: int, summary: bool, size_limit: Tuple) -> bool:
     """
     Check whether there's enough argument passed for processing image sort
     also check if there's conflicting argument being passed
@@ -119,11 +99,6 @@ def  _check_error(length: int, summary: bool, size_limit: Tuple,
     # Either args.include or args.exclude, can't have both
     if size_limit[0] and size_limit[1]:
         sys.exit('Either --include or --exclude option, cannot have both.')
-    # Either args.unknown or args.unknownonly
-    if unknown_tup[0] and unknown_tup[1]:
-        sys.exit('Either --unknown or --unknownonly option, cannot have both.')
-
-
     return True
 
 def _print_screen(image_info: ImageInfo, more: int):
