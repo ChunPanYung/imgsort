@@ -12,7 +12,7 @@ class ImageInfo():
     """
 
 
-    def __init__(self, width: int, height: int, _file: str = None):
+    def __init__(self, width: int, height: int, _file: str):
         self.width: int = width
         self.height: int = height
         # num of image with same width and height

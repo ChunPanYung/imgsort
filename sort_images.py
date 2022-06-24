@@ -115,7 +115,7 @@ def _limit_img(img_size: Tuple[int, int], include: bool,
     return True
 
 
-def _add_linked_list(linked_list: List[ImageInfo], size: Tuple[int],
+def _add_linked_list(linked_list: List[ImageInfo], size: Tuple[int, int],
                      _file: str) -> List[ImageInfo]:
     added: bool = False
     for node in linked_list:  # Cycle through each node in list
