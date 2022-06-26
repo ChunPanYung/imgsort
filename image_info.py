@@ -17,6 +17,7 @@ class ImageInfo():
         self.height: int = height
         # num of image with same width and height
         self.num: int = 1
+        self.paths: list[str] = []
         # total size(bytes) of all images who share the same width and height
         if _file is None:
             self.total_size: int = 0
@@ -45,6 +46,7 @@ class ImageInfo():
         """ increment the number by image by one and total_size by img_size """
         self.num += 1
         self.total_size += os.path.getsize(_file)
+        self.paths.append(_file)
         return True
 
     def is_same(self, tup: Tuple[int, int]) -> bool:

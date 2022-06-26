@@ -24,8 +24,7 @@ def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
         if _limit_img(size, bool_value.include, limit_size):
             # Create new directory if not exist
             # directory name is all image with the same size
-            new_directory: str = os.path.join(destination,
-                                              str(size[0]) + 'x' +
+            new_directory: str = os.path.join(destination, str(size[0]) + 'x' +
                                               str(size[1]))
             create_dir(new_directory)
             move_file(_file, new_directory, bool_value)
@@ -37,7 +36,6 @@ def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
                                     for file_name in os.listdir(_file)]
             sort_img(lst_files, destination, bool_value, limit_size)
     return True
-
 
 def summary(linked_list: List[ImageInfo], files: List[str],
             bool_value: BoolCollection,
@@ -66,6 +64,13 @@ def summary(linked_list: List[ImageInfo], files: List[str],
             _add_linked_list(linked_list, size, _file)
 
     return linked_list
+
+def sort_with_more(linked_list: List[ImageInfo], destination: str,
+                   bool_value: BoolCollection, limit_size: List[int]) -> bool:
+    for node in linked_list:
+        if node.num > bool_value.more:
+            sort_img(node.paths, destination, bool_value, limit_size)
+    return True
 
 # private function
 def _is_image(_file: str) -> Tuple[int, int]:
@@ -114,7 +119,6 @@ def _limit_img(img_size: Tuple[int, int], include: bool,
     # Otherwise return True
     return True
 
-
 def _add_linked_list(linked_list: List[ImageInfo], size: Tuple[int, int],
                      _file: str) -> List[ImageInfo]:
     added: bool = False
@@ -125,6 +129,6 @@ def _add_linked_list(linked_list: List[ImageInfo], size: Tuple[int, int],
 
     # Create new node if it's not added to the current nodes
     if not added:
-        linked_list.append(ImageInfo(size[-1], size[1], _file))
+        linked_list.append(ImageInfo(size[0], size[1], _file))
 
     return linked_list

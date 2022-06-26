@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 This module is mainly used for handling command line arguments,
 and decided which function to call based on arguments.
@@ -81,12 +82,13 @@ def main():
             print('\n===SUMMARY===')
             for node in lst:
                 _print_screen(node, args.more)
+    elif args.more > 0:
+        lst: List[ImageInfo] = []
+        lst = sort_images.summary(lst, args.PATH, bool_value, limit_size)
+        sort_images.sort_with_more(lst, args.PATH[-1], bool_value, limit_size)
     else:
         sort_images.sort_img(args.PATH[:-1], args.PATH[-1], bool_value,
                              limit_size)
-
-    # end of main()
-
 
 def  _check_error(length: int, summary: bool, size_limit: Tuple) -> bool:
     """
