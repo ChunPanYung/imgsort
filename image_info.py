@@ -6,18 +6,23 @@ from typing import Tuple
 from util import sizeof_fmt
 
 
-class ImagePtr():
+class ImageInfo():
     """
     This class contains all images who has the same height and width.
     """
 
-    def __init__(self, width, height, file: str):
+
+    def __init__(self, width: int, height: int, _file: str):
         self.width: int = width
         self.height: int = height
         # num of image with same width and height
         self.num: int = 1
+        self.paths: list[str] = []
         # total size(bytes) of all images who share the same width and height
-        self.total_size: int = os.path.getsize(file)
+        if _file is None:
+            self.total_size: int = 0
+        else:
+            self.total_size: int = os.path.getsize(_file)
 
     def get_width(self) -> int:
         """ return the width of image : int """
@@ -35,13 +40,13 @@ class ImagePtr():
         """ return total size of images who share the same width and height
             return int is in bytes size
         """
-
         return self.total_size
 
-    def increment(self, img_size: int) -> bool:
+    def increment(self, _file: str) -> bool:
         """ increment the number by image by one and total_size by img_size """
         self.num += 1
-        self.total_size += img_size
+        self.total_size += os.path.getsize(_file)
+        self.paths.append(_file)
         return True
 
     def is_same(self, tup: Tuple[int, int]) -> bool:
