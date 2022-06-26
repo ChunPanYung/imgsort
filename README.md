@@ -4,7 +4,7 @@ CLI Command use for sorting images.  It will sort all images by size, moving fro
 `DESTINATION` directory. It will create one or more subdirectories in `DESTINATION` directory,
 name of subdirectories is indicated by the image size it will contain, ex: 1920x1080.
 
-## Update [2020-08-18]
+## Update
 * Use PyInstaller to build single executable
 * Update README.md to include Build Your Own Session
 
@@ -45,6 +45,7 @@ print summary images (numbers and total size), grouped by image size, excluding 
 * Python 3.10.*
 * Pillow 9.1.1
 * PyInstaller 5.1 (for compile into single executable)
+
 
 ## Build Your Own
 1. Download and install Miniconda or Anaconda
