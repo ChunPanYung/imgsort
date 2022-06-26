@@ -82,7 +82,7 @@ def main():
             print('\n===SUMMARY===')
             for node in lst:
                 _print_screen(node, args.more)
-    elif args.more > 0:
+    elif args.more and args.more > 0:
         lst: List[ImageInfo] = []
         lst = sort_images.summary(lst, args.PATH, bool_value, limit_size)
         sort_images.sort_with_more(lst, args.PATH[-1], bool_value, limit_size)
