@@ -23,8 +23,6 @@ def main():
                                 given, only needed Source Directory(s).''')
 
     # Add optional arguments
-    parser.add_argument('-r', '--recursive', action='store_true',
-                        help='Get all images from subsequent directories.')
     parser.add_argument('-c', '--copy', action='store_true',
                         help='Copy instead of move image files.')
     parser.add_argument('-v', '--verbose', action='store_true',
@@ -47,8 +45,7 @@ def main():
 
 
     # Putting all boolean args into one bundle
-    bool_value: BoolCollection = BoolCollection(args.recursive, args.copy,
-                                                args.verbose,
+    bool_value: BoolCollection = BoolCollection(args.copy, args.verbose,
                                                 args.more, bool(args.include))
 
     # check error on arguments
@@ -76,8 +73,7 @@ def main():
         lst: List[ImageInfo] = []
         lst = sort_images.summary(lst, args.PATH, bool_value, limit_size)
         if not lst:
-            print('''No image files found!  Maybe using it with --recursive
-                     option?''')
+            print('No image files found!')
         else:
             print('\n===SUMMARY===')
             for node in lst:
