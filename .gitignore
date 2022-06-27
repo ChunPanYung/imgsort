@@ -109,12 +109,3 @@ venv.bak/
 
 
 # custom
-argparse
-os
-sys
-pylintrc
-2q
-*.md.backup
-*.bak
-\\
-TODO.md
