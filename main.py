@@ -12,7 +12,6 @@ from image_info import ImageInfo
 from bool_collection import BoolCollection
 import util
 
-
 def main():
     """ main CLI Entry """
     parser = argparse.ArgumentParser()
@@ -23,16 +22,12 @@ def main():
                                 given, only needed Source Directory(s).''')
 
     # Add optional arguments
-    parser.add_argument('-r', '--recursive', action='store_true',
-                        help='Get all images from subsequent directories.')
     parser.add_argument('-c', '--copy', action='store_true',
                         help='Copy instead of move image files.')
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='Print detail information.')
     parser.add_argument('-s', '--summary', action='store_true',
                         help='Simulate the run, no file will be moved/copied.')
-    parser.add_argument('-d', '--dry-run', action='store_true',
-                        help='Same as --summary option.')
     parser.add_argument('-i', '--include', action='store', type=str,
                         help='''Sorting only certain size indicated by
                                 this option.''')
@@ -45,10 +40,8 @@ def main():
 
     args = parser.parse_args()
 
-
     # Putting all boolean args into one bundle
-    bool_value: BoolCollection = BoolCollection(args.recursive, args.copy,
-                                                args.verbose,
+    bool_value: BoolCollection = BoolCollection(args.copy, args.verbose,
                                                 args.more, bool(args.include))
 
     # check error on arguments
@@ -62,7 +55,6 @@ def main():
     if not args.summary:
         util.create_dir(args.PATH[-1])
 
-
     limit_size: List[int] = []
     # get the args.include or args.exclude value if one of them is non-empty
     if args.include or args.exclude:
@@ -70,21 +62,19 @@ def main():
                       re.split('[x,]', (args.include or '') +
                                (args.exclude or ''))]
 
-
     # If summary arguments is true, no actual images is sorted
     if args.summary:
         lst: List[ImageInfo] = []
         lst = sort_images.summary(lst, args.PATH, bool_value, limit_size)
         if not lst:
-            print('''No image files found!  Maybe using it with --recursive
-                     option?''')
+            print('No image files found!')
         else:
             print('\n===SUMMARY===')
             for node in lst:
                 _print_screen(node, args.more)
     elif args.more and args.more > 0:
         lst: List[ImageInfo] = []
-        lst = sort_images.summary(lst, args.PATH, bool_value, limit_size)
+        lst = sort_images.summary(lst, args.PATH[:-1], bool_value, limit_size)
         sort_images.sort_with_more(lst, args.PATH[-1], bool_value, limit_size)
     else:
         sort_images.sort_img(args.PATH[:-1], args.PATH[-1], bool_value,
@@ -115,8 +105,6 @@ def _print_screen(image_info: ImageInfo, more: int):
     # the said flag
     elif more < image_info.get_num():
         image_info.to_string()
-
-
 
 if __name__ == '__main__':
     main()

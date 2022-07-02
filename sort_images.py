@@ -14,7 +14,7 @@ def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
              limit_size: List[int]) -> bool:
     """
     sort all images to the destination directory
-    will recursively calling itself if -r option is true
+    will recursively calling itself
     """
 
     for _file in files:
@@ -29,8 +29,8 @@ def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
             create_dir(new_directory)
             move_file(_file, new_directory, bool_value)
 
-        # If file is directory and recursive is True
-        elif bool_value.recursive and os.path.isdir(_file):
+        # If file is directory
+        elif os.path.isdir(_file):
             # recursively calling its own function with complete file path
             lst_files: List[str] = [os.path.join(_file, file_name)
                                     for file_name in os.listdir(_file)]
@@ -52,8 +52,8 @@ def summary(linked_list: List[ImageInfo], files: List[str],
         # do the following if it's image and its size is included
         if _limit_img(size, bool_value.include, limit_size):
             _add_linked_list(linked_list, size, _file)
-        # if it's directory and recursive is on:
-        elif bool_value.recursive and os.path.isdir(_file):
+        # if it's directory
+        elif os.path.isdir(_file):
             # recursively calling its own function with complete file path
             lst_files: List[str] = [os.path.join(_file, file_name)
                                     for file_name in os.listdir(_file)]
@@ -121,6 +121,11 @@ def _limit_img(img_size: Tuple[int, int], include: bool,
 
 def _add_linked_list(linked_list: List[ImageInfo], size: Tuple[int, int],
                      _file: str) -> List[ImageInfo]:
+    """
+    Cycle through List[ImageInfo].  If the image size is already existed in the
+    node, increment the node by 1 and add file info into node.
+    Otherwise create a new node with image size & path
+    """
     added: bool = False
     for node in linked_list:  # Cycle through each node in list
         if node.is_same(size):  # Add img path into node if same size

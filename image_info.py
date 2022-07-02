@@ -17,7 +17,7 @@ class ImageInfo():
         self.height: int = height
         # num of image with same width and height
         self.num: int = 1
-        self.paths: list[str] = []
+        self.paths: list[str] = [_file]
         # total size(bytes) of all images who share the same width and height
         if _file is None:
             self.total_size: int = 0
