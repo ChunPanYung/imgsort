@@ -121,6 +121,11 @@ def _limit_img(img_size: Tuple[int, int], include: bool,
 
 def _add_linked_list(linked_list: List[ImageInfo], size: Tuple[int, int],
                      _file: str) -> List[ImageInfo]:
+    """
+    Cycle through List[ImageInfo].  If the image size is already existed in the
+    node, increment the node by 1 and add file info into node.
+    Otherwise create a new node with image size & path
+    """
     added: bool = False
     for node in linked_list:  # Cycle through each node in list
         if node.is_same(size):  # Add img path into node if same size
