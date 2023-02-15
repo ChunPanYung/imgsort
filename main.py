@@ -47,10 +47,6 @@ def main():
     # check error on arguments
     _check_error(len(args.PATH), args.summary, (args.include, args.exclude))
 
-    # flag --summary if --dry-run is flaged
-    if args.dry_run:
-        args.summary = args.dry_run
-
     # Create destination directory if not exists
     if not args.summary:
         util.create_dir(args.PATH[-1])
