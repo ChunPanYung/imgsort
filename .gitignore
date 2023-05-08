@@ -107,6 +107,5 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-
-# custom
-TODO.md
+# poetry
+poetry.lock
