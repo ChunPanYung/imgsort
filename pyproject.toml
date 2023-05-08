@@ -1,0 +1,23 @@
+[build-system]
+requires = ["poetry_core"]
+build-backend = "poetry.core.mansonry.api"
+
+[tool.poetry]
+name = "imgsort"
+version = "1.1.1"
+description = "Sort images by size."
+
+license = "MIT"
+
+authors = [
+  "Chun Pan Yung"
+]
+
+readme = ["README.md"]
+
+[tool.poetry.dependencies]
+python = ">=3.11.3"
+Pillow = ">=9.1.1"
+
+[tool.poetry.group.test.dependencies]
+pytest = "*"
