@@ -12,37 +12,60 @@ from image_info import ImageInfo
 from bool_collection import BoolCollection
 import util
 
+
 def main():
-    """ main CLI Entry """
+    """main CLI Entry"""
     parser = argparse.ArgumentParser()
     # Add positional arguments
-    parser.add_argument('PATH', nargs='+',
-                        help='''Provides Source Directory(s) and Destination
-                                Directory for image sorting.  If --summary is
-                                given, only needed Source Directory(s).''')
+    parser.add_argument(
+        "PATH",
+        nargs="+",
+        help="""Provides Source Directory(s) and Destination
+            Directory for image sorting.  If --summary is
+            given, only needed Source Directory(s).""",
+    )
 
     # Add optional arguments
-    parser.add_argument('-c', '--copy', action='store_true',
-                        help='Copy instead of move image files.')
-    parser.add_argument('-v', '--verbose', action='store_true',
-                        help='Print detail information.')
-    parser.add_argument('-s', '--summary', action='store_true',
-                        help='Simulate the run, no file will be moved/copied.')
-    parser.add_argument('-i', '--include', action='store', type=str,
-                        help='''Sorting only certain size indicated by
-                                this option.''')
-    parser.add_argument('-e', '--exclude', action='store', type=str,
-                        help='''Exclude certain image size indicated by
-                                this option.''')
-    parser.add_argument('-m', '--more', action='store', type=int,
-                        help='''Sort only if image of said size is more than
-                                X number.''')
+    parser.add_argument(
+        "-c", "--copy", action="store_true", help="Copy instead of move image files."
+    )
+    parser.add_argument(
+        "-v", "--verbose", action="store_true", help="Print detail information."
+    )
+    parser.add_argument(
+        "-s",
+        "--summary",
+        action="store_true",
+        help="Simulate the run, no file will be moved/copied.",
+    )
+    parser.add_argument(
+        "-i",
+        "--include",
+        action="store",
+        type=str,
+        help="Sorting only certain size indicated by this option.",
+    )
+    parser.add_argument(
+        "-e",
+        "--exclude",
+        action="store",
+        type=str,
+        help="Exclude certain image size indicated by this option.",
+    )
+    parser.add_argument(
+        "-m",
+        "--more",
+        action="store",
+        type=int,
+        help="Sort only if image of said size is more than X number.",
+    )
 
     args = parser.parse_args()
 
     # Putting all boolean args into one bundle
-    bool_value: BoolCollection = BoolCollection(args.copy, args.verbose,
-                                                args.more, bool(args.include))
+    bool_value: BoolCollection = BoolCollection(
+        args.copy, args.verbose, args.more, bool(args.include)
+    )
 
     # check error on arguments
     _check_error(len(args.PATH), args.summary, (args.include, args.exclude))
@@ -54,18 +77,19 @@ def main():
     limit_size: List[int] = []
     # get the args.include or args.exclude value if one of them is non-empty
     if args.include or args.exclude:
-        limit_size = [int(num) for num in
-                      re.split('[x,]', (args.include or '') +
-                               (args.exclude or ''))]
+        limit_size = [
+            int(num)
+            for num in re.split("[x,]", (args.include or "") + (args.exclude or ""))
+        ]
 
     # If summary arguments is true, no actual images is sorted
     if args.summary:
         lst: List[ImageInfo] = []
         lst = sort_images.summary(lst, args.PATH, bool_value, limit_size)
         if not lst:
-            print('No image files found!')
+            print("No image files found!")
         else:
-            print('\n===SUMMARY===')
+            print("\n===SUMMARY===")
             for node in lst:
                 _print_screen(node, args.more)
     elif args.more and args.more > 0:
@@ -73,21 +97,22 @@ def main():
         lst = sort_images.summary(lst, args.PATH[:-1], bool_value, limit_size)
         sort_images.sort_with_more(lst, args.PATH[-1], bool_value, limit_size)
     else:
-        sort_images.sort_img(args.PATH[:-1], args.PATH[-1], bool_value,
-                             limit_size)
+        sort_images.sort_img(args.PATH[:-1], args.PATH[-1], bool_value, limit_size)
 
-def  _check_error(length: int, summary: bool, size_limit: Tuple) -> bool:
+
+def _check_error(length: int, summary: bool, size_limit: Tuple) -> bool:
     """
     Check whether there's enough argument passed for processing image sort
     also check if there's conflicting argument being passed
     """
     # Require at least 2 position arguments if -d is False
     if not summary and length < 2:
-        sys.exit('Please indicates both SRC and DEST directories')
+        sys.exit("Please indicates both SRC and DEST directories")
     # Either args.include or args.exclude, can't have both
     if size_limit[0] and size_limit[1]:
-        sys.exit('Either --include or --exclude option, cannot have both.')
+        sys.exit("Either --include or --exclude option, cannot have both.")
     return True
+
 
 def _print_screen(image_info: ImageInfo, more: int):
     """
@@ -102,5 +127,6 @@ def _print_screen(image_info: ImageInfo, more: int):
     elif more < image_info.get_num():
         image_info.to_string()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
