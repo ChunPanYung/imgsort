@@ -9,6 +9,30 @@ from image_info import ImageInfo
 from bool_collection import BoolCollection
 from util import create_dir, move_file
 
+def sort_info(file_paths: list[str], current_info: list[ImageInfo]) -> list[ImageInfo]:
+    """
+    Get images info such as path and size, then sort them into list.
+    Return: lst: List[ImageInfo]
+    """
+
+    # Cycle through each file
+    for _file in file_paths:
+        # get the image width and height
+        size: Tuple[int, int] = _is_image(_file)
+        # do the following if it's image and its size is included
+        if size != (0, 0):
+            _add_linked_list(current_info, size, _file)
+        elif os.path.isdir(_file):
+            # Get all file paths within a directory
+            sub_files: List[str] = [os.path.join(_file, file_name)
+                                    for file_name in os.listdir(_file)]
+            current_info.append(sort_info(sub_files, current_info))
+        # do the following if it's non-image or it cannot read the size
+        elif size == (0, 0):
+            print(f"{_file} is not a image file.")
+
+    return current_info
+
 # TODO: add --more function here
 def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
              limit_size: List[int]) -> bool:
