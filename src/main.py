@@ -5,12 +5,9 @@ and decided which function to call based on arguments.
 """
 import sys
 import argparse
-import re
-from typing import List, Tuple
 import sort_images
 from image_info import ImageInfo
-from bool_collection import BoolCollection
-import util
+from os import EX_OK
 
 
 def main():
@@ -62,45 +59,19 @@ def main():
 
     args = parser.parse_args()
 
-    # Putting all boolean args into one bundle
-    bool_value: BoolCollection = BoolCollection(
-        args.copy, args.verbose, args.more, bool(args.include)
-    )
-
     # check error on arguments
-    _check_error(len(args.PATH), args.summary, (args.include, args.exclude))
+    _check_args(len(args.PATH), args.summary, (args.include, args.exclude))
 
-    # Create destination directory if not exists
-    if not args.summary:
-        util.create_dir(args.PATH[-1])
-
-    limit_size: List[int] = []
-    # get the args.include or args.exclude value if one of them is non-empty
-    if args.include or args.exclude:
-        limit_size = [
-            int(num)
-            for num in re.split("[x,]", (args.include or "") + (args.exclude or ""))
-        ]
-
-    # If summary arguments is true, no actual images is sorted
     if args.summary:
-        lst: List[ImageInfo] = []
-        lst = sort_images.summary(lst, args.PATH, bool_value, limit_size)
-        if not lst:
-            print("No image files found!")
-        else:
-            print("\n===SUMMARY===")
-            for node in lst:
-                _print_screen(node, args.more)
-    elif args.more and args.more > 0:
-        lst: List[ImageInfo] = []
-        lst = sort_images.summary(lst, args.PATH[:-1], bool_value, limit_size)
-        sort_images.sort_with_more(lst, args.PATH[-1], bool_value, limit_size)
-    else:
-        sort_images.sort_img(args.PATH[:-1], args.PATH[-1], bool_value, limit_size)
+        # If args.summary is on, sort images on the DESTINATION directory
+        lst: list[ImageInfo] = sort_images.sort_info(args.PATH[:], list())
+        for node in lst:
+            _to_string(node, args.more)
+            sys.exit(EX_OK)
 
+    lst: list[ImageInfo] = sort_images.sort_info(args.PATH[:-1], list())
 
-def _check_error(length: int, summary: bool, size_limit: Tuple) -> bool:
+def _check_args(length: int, summary: bool, size_limit: tuple) -> bool:
     """
     Check whether there's enough argument passed for processing image sort
     also check if there's conflicting argument being passed
@@ -114,7 +85,7 @@ def _check_error(length: int, summary: bool, size_limit: Tuple) -> bool:
     return True
 
 
-def _print_screen(image_info: ImageInfo, more: int):
+def _to_string(image_info: ImageInfo, more: int):
     """
     print ImageInfo on_screen depends on whether more is True or
     False (0, negative or None)
