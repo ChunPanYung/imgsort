@@ -67,7 +67,7 @@ def main():
         lst: list[ImageInfo] = sort_images.sort_info(args.PATH[:], list())
         for node in lst:
             _to_string(node, args.more)
-            sys.exit(EX_OK)
+        sys.exit(EX_OK)
 
     lst: list[ImageInfo] = sort_images.sort_info(args.PATH[:-1], list())
 
