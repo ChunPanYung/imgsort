@@ -3,6 +3,7 @@ This module will only contain functions that manipulates class ImageInfo
 in linked list.
 """
 import os
+import sys
 from PIL import Image
 from image_info import ImageInfo
 
@@ -12,10 +13,8 @@ def sort_info(file_paths: list[str], current_info: list[ImageInfo]) -> list[Imag
     Get images info such as path and size, then sort them into list.
     Return: lst: list[ImageInfo]
     """
-    # current_info: list[ImageInfo] = current_info  # reference pointer
     # Cycle through each file
     for _file in file_paths:
-        print(_file)
         # get the image width and height
         size: tuple[int, int] = _is_image(_file)
         # do the following if it's image and its size is included
@@ -27,6 +26,8 @@ def sort_info(file_paths: list[str], current_info: list[ImageInfo]) -> list[Imag
             sort_info(sub_files, current_info)
         elif size != (0, 0):
             _to_list(current_info, size, _file)
+        elif size == (0, 0):
+            print(f"{_file} is not a image file.", file=sys.stderr)
 
     return current_info
 
@@ -43,7 +44,6 @@ def _is_image(_file: str) -> tuple[int, int]:
         with Image.open(_file) as img:
             return img.size
     except IOError:
-        print(f"{_file} is not a image file.")
         return (0, 0)
 
 
