@@ -2,7 +2,6 @@
 Includes various utility functions
 """
 import sys
-import shutil
 from pathlib import Path
 
 
