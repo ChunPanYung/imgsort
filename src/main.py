@@ -8,11 +8,12 @@ import argparse
 import sort_images
 from image_info import ImageInfo
 from os import EX_OK
+from pathlib import Path
 
 
 def main():
     """main CLI Entry"""
-    parser = argparse.ArgumentParser()
+    parser: argparse.ArgumentParser = argparse.ArgumentParser()
     # Add positional arguments
     parser.add_argument(
         "PATH",
@@ -57,33 +58,26 @@ def main():
         help="Sort only if image of said size is more than X number.",
     )
 
-    args = parser.parse_args()
+    args: argparse.Namespace = parser.parse_args()
 
-    # check error on arguments
-    _check_args(len(args.PATH), args.summary, (args.include, args.exclude))
+    lst: list[ImageInfo] = []
 
     if args.summary:
-        # If args.summary is on, sort images on the DESTINATION directory
-        lst: list[ImageInfo] = sort_images.sort_info(args.PATH[:], list())
+        lst = sort_images.sort_info(args.PATH[:], [])
+    else:
+        lst = sort_images.sort_info(args.PATH[:-1], [])
+        # Create directory, throw error if file with same name exists
+        try:
+            Path(args.PATH[-1]).mkdir(parents=True, exist_ok=True)
+        except FileExistsError as error:
+            sys.exit(error)
+
+    if args.summary:
         for node in lst:
-            # if int(args.more) < node.get_num():
             print(node)
-        sys.exit(EX_OK)
 
-    lst: list[ImageInfo] = sort_images.sort_info(args.PATH[:-1], list())
+    sys.exit(EX_OK)
 
-def _check_args(length: int, summary: bool, size_limit: tuple) -> bool:
-    """
-    Check whether there's enough argument passed for processing image sort
-    also check if there's conflicting argument being passed
-    """
-    # Require at least 2 position arguments if -d is False
-    if not summary and length < 2:
-        sys.exit("Please indicates both SRC and DEST directories")
-    # Either args.include or args.exclude, can't have both
-    if size_limit[0] and size_limit[1]:
-        sys.exit("Either --include or --exclude option, cannot have both.")
-    return True
 
 
 if __name__ == "__main__":
