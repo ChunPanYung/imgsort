@@ -66,7 +66,8 @@ def main():
         # If args.summary is on, sort images on the DESTINATION directory
         lst: list[ImageInfo] = sort_images.sort_info(args.PATH[:], list())
         for node in lst:
-            _to_string(node, args.more)
+            # if int(args.more) < node.get_num():
+            print(node.__str__())
         sys.exit(EX_OK)
 
     lst: list[ImageInfo] = sort_images.sort_info(args.PATH[:-1], list())
@@ -83,20 +84,6 @@ def _check_args(length: int, summary: bool, size_limit: tuple) -> bool:
     if size_limit[0] and size_limit[1]:
         sys.exit("Either --include or --exclude option, cannot have both.")
     return True
-
-
-def _to_string(image_info: ImageInfo, more: int):
-    """
-    print ImageInfo on_screen depends on whether more is True or
-    False (0, negative or None)
-    """
-    # if --more option is flaged
-    if not more:
-        image_info.to_string()
-    # otherwise print on-screen only if image total is more than
-    # the said flag
-    elif more < image_info.get_num():
-        image_info.to_string()
 
 
 if __name__ == "__main__":
