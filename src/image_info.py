@@ -2,7 +2,6 @@
 This class is only used when doing summary or dry-run
 """
 import os
-from typing import Tuple
 from util import sizeof_fmt
 
 
@@ -49,7 +48,7 @@ class ImageInfo():
         self.paths.append(_file)
         return True
 
-    def is_same(self, tup: Tuple[int, int]) -> bool:
+    def is_same(self, tup: tuple[int, int]) -> bool:
         """
         recive that tuple that contains 2 value (width: int, height: int)
 
