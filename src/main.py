@@ -9,6 +9,7 @@ import sort_images
 from image_info import ImageInfo
 from os import EX_OK
 from pathlib import Path
+import errno
 
 
 def main():
@@ -72,12 +73,16 @@ def main():
         except FileExistsError as error:
             sys.exit(error)
 
+    if args.include and args.exclude:
+        print("error: either use -i/--include or -e/--exclude", file=sys.stderr)
+        sys.exit(errno.EINVAL)  # Invalid argument error
+
+    # DEBUG
     if args.summary:
         for node in lst:
             print(node)
 
     sys.exit(EX_OK)
-
 
 
 if __name__ == "__main__":
