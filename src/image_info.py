@@ -2,7 +2,16 @@
 This class is only used when doing summary or dry-run
 """
 import os
-from util import sizeof_fmt
+
+def sizeof_fmt(num):
+    """ Credit to Fred Cirera
+        print human readable file size
+    """
+    for unit in ['Bytes', 'KB', 'MB', 'GB', 'TB']:
+        if num < 1024.0:
+            return "%3.1f%s" % (num, unit)
+        num /= 1024.0
+    return num
 
 
 class ImageInfo:
