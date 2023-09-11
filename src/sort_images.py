@@ -12,6 +12,8 @@ import re
 def sort_info(file_paths: list[str], image_info: list[ImageInfo]) -> list[ImageInfo]:
     """
     Get images info such as path and size, then sort them into list.
+
+    This function will modfiy file_paths: list[str] itself.
     Return: lst: list[ImageInfo]
     """
     # Cycle through each file
@@ -38,7 +40,9 @@ def filter_size(
 ) -> list[ImageInfo]:
     try:
         options: list[int] = [int(element) for element in re.split(",|x", size_opts)]
-        pair: tuple[int, int] = list(zip(options[::2], options[1::2]))
+        pair: list[tuple[int, int]] = list(zip(options[::2], options[1::2]))
+        # First by first, then second element
+        pair.sort(key=lambda index: (index[0], index[1]))
     except TypeError as error:
         sys.exit(error)
     except ValueError as error:

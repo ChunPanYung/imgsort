@@ -73,6 +73,10 @@ def main():
         except FileExistsError as error:
             sys.exit(error)
 
+
+    # First by first, then second element
+    lst.sort(key=lambda index: (index.get_width(), index.get_height()))
+
     if args.include and args.exclude:
         print("error: either use -i/--include or -e/--exclude", file=sys.stderr)
         sys.exit(errno.EINVAL)  # Invalid argument error
