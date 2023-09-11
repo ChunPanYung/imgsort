@@ -76,6 +76,9 @@ def main():
     if args.include and args.exclude:
         print("error: either use -i/--include or -e/--exclude", file=sys.stderr)
         sys.exit(errno.EINVAL)  # Invalid argument error
+    elif args.include or args.exclude:
+        size_opts: str = args.include if args.include else args.exclude
+        sort_images.filter_size(lst, bool(args.include), size_opts)
 
     # DEBUG
     if args.summary:

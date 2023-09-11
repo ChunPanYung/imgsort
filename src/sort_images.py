@@ -6,9 +6,10 @@ import os
 import sys
 from PIL import Image
 from image_info import ImageInfo
+import re
 
 
-def sort_info(file_paths: list[str], current_info: list[ImageInfo]) -> list[ImageInfo]:
+def sort_info(file_paths: list[str], image_info: list[ImageInfo]) -> list[ImageInfo]:
     """
     Get images info such as path and size, then sort them into list.
     Return: lst: list[ImageInfo]
@@ -23,13 +24,27 @@ def sort_info(file_paths: list[str], current_info: list[ImageInfo]) -> list[Imag
             sub_files: list[str] = [
                 os.path.join(_file, file_name) for file_name in os.listdir(_file)
             ]
-            sort_info(sub_files, current_info)
+            sort_info(sub_files, image_info)
         elif size != (0, 0):
-            _to_list(current_info, size, _file)
-        elif size == (0, 0):
+            _to_list(image_info, size, _file)
+        else:
             print(f"{_file} is not a image file.", file=sys.stderr)
 
-    return current_info
+    return image_info
+
+
+def filter_size(
+    image_info: list[ImageInfo], is_include: bool, size_opts: str
+) -> list[ImageInfo]:
+    try:
+        options: list[int] = [int(element) for element in re.split(",|x", size_opts)]
+        pair: tuple[int, int] = list(zip(options[::2], options[1::2]))
+    except TypeError as error:
+        sys.exit(error)
+    except ValueError as error:
+        sys.exit(error)
+
+    return image_info
 
 
 # private function
