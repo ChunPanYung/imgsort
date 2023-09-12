@@ -54,21 +54,22 @@ def filter_size(
         )
         # Sort by first, then second element
         pair.sort(key=lambda index: (index[0], index[1]))
+        image_info.sort(key=lambda index: (index.width, index.height))
 
-        new_lst: list[ImageInfo] = []  # This list will only used if is_include is true
+        new_lst: list[ImageInfo] = []  # Create a new list for filtered node
 
         # Cycle through each element
         # if is_include is true, append the element from current list to new_lst
         # if is_include is false, remove the element from current list
         for node in image_info:
-            if (node.width, node.height) in pair:
-                if is_include:
+            if is_include:
+                if (node.width, node.height) in pair:
                     new_lst.append(node)
-                else:
-                    image_info.remove(node)
+            elif (node.width, node.height) not in pair:
+                new_lst.append(node)
 
         # Return new_lst if it is not empty, otherwise return image_info
-        return new_lst if new_lst else image_info
+        return new_lst
     except TypeError as error:
         sys.exit(error)
     except ValueError:
@@ -80,8 +81,18 @@ def filter_size(
         print(msg, file=sys.stderr)
         sys.exit(errno.EINVAL)  # Invalid argument error
 
-def filter_more(lst: list[ImageInfo], more: int):
-    pass
+
+def filter_minimum(image_info: list[ImageInfo], minimum: int):
+    """
+    Compare ImageInfo.num  to minimum:int on each node
+    If it is less than minimum, remove from list
+    """
+    for node in image_info:
+        if node.num < minimum:
+            image_info.remove(node)
+
+    return image_info
+
 
 def sort_execute(lst: list[ImageInfo], copy: bool):
     pass
