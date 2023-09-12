@@ -13,7 +13,14 @@ import errno
 
 
 def main():
-    """main CLI Entry"""
+    """
+    main CLI Entry
+
+    After collecting all images info, it will store it as a list.
+    It will run through each function one by one.
+    Each function corresponds to one or more argument options,
+    it will change list depends on function and what command options is enabled.
+    """
     parser: argparse.ArgumentParser = argparse.ArgumentParser()
     # Add positional arguments
     parser.add_argument(
