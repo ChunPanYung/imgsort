@@ -7,7 +7,7 @@ import sys
 import argparse
 import sort_images
 from image_info import ImageInfo
-from os import EX_OK
+import os
 from pathlib import Path
 import errno
 
@@ -91,7 +91,7 @@ def main():
         for node in lst:
             print(node)
 
-    sys.exit(EX_OK)
+    sys.exit(os.EX_OK)
 
 
 if __name__ == "__main__":
