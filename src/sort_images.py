@@ -80,6 +80,12 @@ def filter_size(
         print(msg, file=sys.stderr)
         sys.exit(errno.EINVAL)  # Invalid argument error
 
+def filter_more(lst: list[ImageInfo], more: int):
+    pass
+
+def sort_execute(lst: list[ImageInfo], copy: bool):
+    pass
+
 
 # private function
 def _is_image(file: str) -> tuple[int, int]:

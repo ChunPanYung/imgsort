@@ -94,9 +94,14 @@ def main():
         size_opts: str = args.include if args.include else args.exclude
         lst = sort_images.filter_size(lst, bool(args.include), size_opts)
 
+    if args.more:
+        pass
+
     if args.summary:
         for node in lst:
             print(node)
+    else:
+        sort_images.sort_execute(lst)
 
     sys.exit(os.EX_OK)
 
