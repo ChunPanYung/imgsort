@@ -60,10 +60,10 @@ def main():
     )
     parser.add_argument(
         "-m",
-        "--more",
+        "--minimum",
         action="store",
         type=int,
-        help="Sort only if image of said size is more than X number.",
+        help="Sort only if same size images are at least minimal number given.",
     )
 
     args: argparse.Namespace = parser.parse_args()
@@ -84,9 +84,6 @@ def main():
         except FileExistsError as error:
             sys.exit(error)
 
-    # First by first, then second element
-    lst.sort(key=lambda index: (index.width, index.height))
-
     if args.include and args.exclude:
         print("error: either use -i/--include or -e/--exclude", file=sys.stderr)
         sys.exit(errno.EINVAL)  # Invalid argument error
@@ -94,14 +91,14 @@ def main():
         size_opts: str = args.include if args.include else args.exclude
         lst = sort_images.filter_size(lst, bool(args.include), size_opts)
 
-    if args.more:
-        pass
+    if args.minimum:
+        sort_images.filter_minimum(lst, args.minimum)
 
     if args.summary:
         for node in lst:
             print(node)
     else:
-        sort_images.sort_execute(lst)
+        sort_images.sort_execute(lst, args.copy)
 
     sys.exit(os.EX_OK)
 
