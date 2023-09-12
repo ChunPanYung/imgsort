@@ -65,6 +65,10 @@ def main():
 
     if args.summary:
         lst = sort_images.sort_info(args.PATH[:], [])
+    elif len(args.PATH[:]) < 2:
+        raise argparse.ArgumentTypeError(
+            "Need to have 2 paths: Source and destination."
+        )
     else:
         lst = sort_images.sort_info(args.PATH[:-1], [])
         # Create directory, throw error if file with same name exists
@@ -73,9 +77,8 @@ def main():
         except FileExistsError as error:
             sys.exit(error)
 
-
     # First by first, then second element
-    lst.sort(key=lambda index: (index.get_width(), index.get_height()))
+    lst.sort(key=lambda index: (index.width, index.height))
 
     if args.include and args.exclude:
         print("error: either use -i/--include or -e/--exclude", file=sys.stderr)
@@ -84,7 +87,6 @@ def main():
         size_opts: str = args.include if args.include else args.exclude
         sort_images.filter_size(lst, bool(args.include), size_opts)
 
-    # DEBUG
     if args.summary:
         for node in lst:
             print(node)
