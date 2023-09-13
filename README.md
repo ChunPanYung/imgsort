@@ -19,7 +19,6 @@ name of subdirectories is indicated by the image size it will contain, ex: 1920x
 
 |Options        |Description                                                              |
 |---------------|-------------------------------------------------------------------------|
-|-v, --verbose  |print details information                                                |
 |-s, --summary  |print out summary of such execution, but no actual sorting takes in place|               
 |-c, --copy     |copy images instead of moving images                                     |
 |-i, --include  |Only sort images with indicated size, ex: --include=1920x1080,1440x2560  |

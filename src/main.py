@@ -36,9 +36,6 @@ def main():
         "-c", "--copy", action="store_true", help="Copy instead of move image files."
     )
     parser.add_argument(
-        "-v", "--verbose", action="store_true", help="Print detail information."
-    )
-    parser.add_argument(
         "-s",
         "--summary",
         action="store_true",
