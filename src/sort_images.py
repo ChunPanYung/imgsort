@@ -107,12 +107,19 @@ def sort_execute(image_info: list[ImageInfo], destination: str, copy: bool) -> N
     # Cycle through paths: list[str] within each node
     # Move or copy file to destination
     for node in image_info:
+        # Create diretory based on image size
+        try:
+            dir_name: str = os.path.join(destination, f"{node.width}x{node.height}")
+            pathlib.Path(dir_name).mkdir(parents=True, exist_ok=True)
+        except FileExistsError as error:
+            sys.exit(error)
+        # Copy or move each file into above directory
         for path in node.paths:
             try:
                 if copy:
-                    shutil.copy(path, destination)
+                    shutil.copy(path, dir_name)
                 else:
-                    shutil.move(path, destination)
+                    shutil.move(path, dir_name)
             except shutil.Error as error:
                 print(f"{error}", file=sys.stderr)
 
