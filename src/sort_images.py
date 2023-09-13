@@ -3,137 +3,157 @@ This module will only contain functions that manipulates class ImageInfo
 in linked list.
 """
 import os
-from typing import List, Tuple
+import sys
 from PIL import Image
 from image_info import ImageInfo
-from bool_collection import BoolCollection
-from util import create_dir, move_file
+import re
+import errno
+import shutil
+import pathlib
 
-# TODO: add --more function here
-def sort_img(files: List[str], destination: str, bool_value: BoolCollection,
-             limit_size: List[int]) -> bool:
+
+def sort_info(file_paths: list[str], image_info: list[ImageInfo]) -> list[ImageInfo]:
     """
-    sort all images to the destination directory
-    will recursively calling itself
+    Get images info such as path and size, then sort them into list.
+
+    This function will modfiy file_paths: list[str] itself.
+    Return: lst: list[ImageInfo]
     """
-
-    for _file in files:
-        # get the image width and size
-        size: Tuple[int, int] = _is_image(_file)
-        # sort to destination if it's image
-        if _limit_img(size, bool_value.include, limit_size):
-            # Create new directory if not exist
-            # directory name is all image with the same size
-            new_directory: str = os.path.join(destination, str(size[0]) + 'x' +
-                                              str(size[1]))
-            create_dir(new_directory)
-            move_file(_file, new_directory, bool_value)
-
-        # If file is directory
-        elif os.path.isdir(_file):
-            # recursively calling its own function with complete file path
-            lst_files: List[str] = [os.path.join(_file, file_name)
-                                    for file_name in os.listdir(_file)]
-            sort_img(lst_files, destination, bool_value, limit_size)
-    return True
-
-def summary(linked_list: List[ImageInfo], files: List[str],
-            bool_value: BoolCollection,
-            limit_size: List[int]) -> List[ImageInfo]:
-    """
-    summaries the number of images and image size that's moved/copied
-    Return: lst: List[ImageInfo]
-    """
-
     # Cycle through each file
-    for _file in files:
+    for file in file_paths:
         # get the image width and height
-        size: Tuple[int, int] = _is_image(_file)
+        size: tuple[int, int] = _is_image(file)
         # do the following if it's image and its size is included
-        if _limit_img(size, bool_value.include, limit_size):
-            _add_linked_list(linked_list, size, _file)
-        # if it's directory
-        elif os.path.isdir(_file):
-            # recursively calling its own function with complete file path
-            lst_files: List[str] = [os.path.join(_file, file_name)
-                                    for file_name in os.listdir(_file)]
-            linked_list = summary(linked_list, lst_files, bool_value,
-                                  limit_size)
-        # do the following if it's non-image or it cannot read the size
-        elif size == (0, 0):
-            _add_linked_list(linked_list, size, _file)
+        if os.path.isdir(file):
+            # Get all file paths within a directory
+            sub_files: list[str] = [
+                os.path.join(file, file_name) for file_name in os.listdir(file)
+            ]
+            sort_info(sub_files, image_info)
+        elif size != (0, 0):
+            _to_list(image_info, size, file)
+        else:
+            print(f"{file} is not a image file.", file=sys.stderr)
 
-    return linked_list
+    return image_info
 
-def sort_with_more(linked_list: List[ImageInfo], destination: str,
-                   bool_value: BoolCollection, limit_size: List[int]) -> bool:
-    for node in linked_list:
-        if node.num > bool_value.more:
-            sort_img(node.paths, destination, bool_value, limit_size)
-    return True
+
+def filter_size(
+    image_info: list[ImageInfo], is_include: bool, size_opts: str
+) -> list[ImageInfo]:
+    """
+    Filter images size depending on is_include and size_opts argument.
+
+    If is_include is true, it will only include images that has the same
+    width and height as in size_opts.
+    If is_include is false, it exclude images that has the same
+    width and height as in size_opts.
+    """
+    try:
+        options: list[int] = [int(element) for element in re.split(",|x", size_opts)]
+        pair: list[tuple[int, int]] = list(
+            zip(options[::2], options[1::2], strict=True)
+        )
+        # Sort by first, then second element
+        pair.sort(key=lambda index: (index[0], index[1]))
+        image_info.sort(key=lambda index: (index.width, index.height))
+
+        new_lst: list[ImageInfo] = []  # Create a new list for filtered node
+
+        for node in image_info:
+            if is_include:
+                if (node.width, node.height) in pair:
+                    new_lst.append(node)
+            elif (node.width, node.height) not in pair:
+                new_lst.append(node)
+
+        return new_lst
+    except TypeError as error:
+        sys.exit(error)
+    except ValueError:
+        msg: str = (
+            "Check argument string for either --include/-i or --exclude/-e.\n"
+            + "It should be in the format of: 10x20,30x40,50x60 etc,\n"
+            + "which is [wdith]x[height],[width]x[height],[width]x[height] etc."
+        )
+        print(msg, file=sys.stderr)
+        sys.exit(errno.EINVAL)  # Invalid argument error
+
+
+def filter_minimum(image_info: list[ImageInfo], minimum: int) -> list[ImageInfo]:
+    """
+    Compare ImageInfo.num  to minimum: int on each node
+    If it is ImageInfo.num is equal or more than minimum, append to new list
+    """
+    new_lst: list[ImageInfo] = []
+    for node in image_info:
+        if node.num >= minimum:
+            new_lst.append(node)
+
+    return new_lst
+
+
+def sort_execute(image_info: list[ImageInfo], destination: str, copy: bool) -> None:
+    """
+    Move or copy file to destination,
+    depending to whether copy: bool is true or false.
+    """
+    # Create directory destination
+    try:
+        pathlib.Path(destination).mkdir(parents=True, exist_ok=True)
+    except FileExistsError as error:
+        sys.exit(error)
+
+    # Cycle through paths: list[str] within each node
+    # Move or copy file to destination
+    for node in image_info:
+        # Create diretory based on image size
+        try:
+            dir_name: str = os.path.join(destination, f"{node.width}x{node.height}")
+            pathlib.Path(dir_name).mkdir(parents=True, exist_ok=True)
+        except FileExistsError as error:
+            sys.exit(error)
+        # Copy or move each file into above directory
+        for path in node.paths:
+            try:
+                if copy:
+                    shutil.copy(path, dir_name)
+                else:
+                    shutil.move(path, dir_name)
+            except shutil.Error as error:
+                print(f"{error}", file=sys.stderr)
+
 
 # private function
-def _is_image(_file: str) -> Tuple[int, int]:
+def _is_image(file: str) -> tuple[int, int]:
     """
     verify whether it's image or not
 
-    Return Tuple (img.width, img.height) if yes
-    Return emtpy Tuple if no
+    Return tuple (img.width, img.height) if yes
+    Return emtpy tuple if no
     """
     try:
-        with Image.open(_file) as img:
+        with Image.open(file) as img:
             return img.size
     except IOError:
         return (0, 0)
 
 
-def _limit_img(img_size: Tuple[int, int], include: bool,
-               limit_size: List[int]) -> bool:
+def _to_list(lst: list[ImageInfo], size: tuple[int, int], file: str) -> list[ImageInfo]:
     """
-    Return False if img_size is (0, 0)
-    Return True if img_size is in included size
-    Return False if it's excluded size
-    Othersie return True
-    """
-    # Return False if img_size is (0, 0)
-    if img_size == (0, 0):
-        return False
-    # if limit_size is not empty, it means either include args or exclude
-    # args is true
-    if limit_size:
-        # Return True if include is True and img_size is in included size
-        if include:
-            for i, j in zip(limit_size[0::2], limit_size[1::2]):
-                if img_size[0] == i and img_size[1] == j:
-                    return True
-            # return false if it's not included size
-            return False
-
-        # Return False if it's excluded size
-        for i, j in zip(limit_size[0::2], limit_size[1::2]):
-            if img_size[0] == i and img_size[1] == j:
-                return False
-        # return True if it's not excluded size
-        return True
-
-    # Otherwise return True
-    return True
-
-def _add_linked_list(linked_list: List[ImageInfo], size: Tuple[int, int],
-                     _file: str) -> List[ImageInfo]:
-    """
-    Cycle through List[ImageInfo].  If the image size is already existed in the
+    Cycle through list[ImageInfo].  If the image size is already existed in the
     node, increment the node by 1 and add file info into node.
     Otherwise create a new node with image size & path
     """
+    # lst: list[ImageInfo] = linked_list  # reference pointer
     added: bool = False
-    for node in linked_list:  # Cycle through each node in list
+    for node in lst:  # Cycle through each node in list
         if node.is_same(size):  # Add img path into node if same size
-            node.increment(_file)
+            node.increment(file)
             added = True
 
     # Create new node if it's not added to the current nodes
     if not added:
-        linked_list.append(ImageInfo(size[0], size[1], _file))
+        lst.append(ImageInfo(size[0], size[1], file))
 
-    return linked_list
+    return lst

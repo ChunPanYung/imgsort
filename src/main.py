@@ -5,17 +5,30 @@ and decided which function to call based on arguments.
 """
 import sys
 import argparse
-import re
-from typing import List, Tuple
 import sort_images
 from image_info import ImageInfo
-from bool_collection import BoolCollection
-import util
-
+import os
+from pathlib import Path
+import errno
+import tomllib
 
 def main():
-    """main CLI Entry"""
-    parser = argparse.ArgumentParser()
+    """
+    main CLI Entry
+
+    After collecting all images info, it will store it as a list.
+    It will run through each function one by one.
+    Each function corresponds to one or more argument options,
+    it will change list depends on function and what command options is enabled.
+    """
+    parser: argparse.ArgumentParser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="version",
+        version='%(prog)s 1.2.0'
+    )
+
     # Add positional arguments
     parser.add_argument(
         "PATH",
@@ -28,9 +41,6 @@ def main():
     # Add optional arguments
     parser.add_argument(
         "-c", "--copy", action="store_true", help="Copy instead of move image files."
-    )
-    parser.add_argument(
-        "-v", "--verbose", action="store_true", help="Print detail information."
     )
     parser.add_argument(
         "-s",
@@ -54,78 +64,47 @@ def main():
     )
     parser.add_argument(
         "-m",
-        "--more",
+        "--minimum",
         action="store",
         type=int,
-        help="Sort only if image of said size is more than X number.",
+        help="Sort only if same size images are at least minimal number given.",
     )
 
-    args = parser.parse_args()
+    args: argparse.Namespace = parser.parse_args()
 
-    # Putting all boolean args into one bundle
-    bool_value: BoolCollection = BoolCollection(
-        args.copy, args.verbose, args.more, bool(args.include)
-    )
+    lst: list[ImageInfo] = []
 
-    # check error on arguments
-    _check_error(len(args.PATH), args.summary, (args.include, args.exclude))
-
-    # Create destination directory if not exists
-    if not args.summary:
-        util.create_dir(args.PATH[-1])
-
-    limit_size: List[int] = []
-    # get the args.include or args.exclude value if one of them is non-empty
-    if args.include or args.exclude:
-        limit_size = [
-            int(num)
-            for num in re.split("[x,]", (args.include or "") + (args.exclude or ""))
-        ]
-
-    # If summary arguments is true, no actual images is sorted
     if args.summary:
-        lst: List[ImageInfo] = []
-        lst = sort_images.summary(lst, args.PATH, bool_value, limit_size)
-        if not lst:
-            print("No image files found!")
-        else:
-            print("\n===SUMMARY===")
-            for node in lst:
-                _print_screen(node, args.more)
-    elif args.more and args.more > 0:
-        lst: List[ImageInfo] = []
-        lst = sort_images.summary(lst, args.PATH[:-1], bool_value, limit_size)
-        sort_images.sort_with_more(lst, args.PATH[-1], bool_value, limit_size)
+        lst = sort_images.sort_info(args.PATH[:], [])
+    elif len(args.PATH[:]) < 2:
+        raise argparse.ArgumentTypeError(
+            "Need to have 2 paths: Source and destination."
+        )
     else:
-        sort_images.sort_img(args.PATH[:-1], args.PATH[-1], bool_value, limit_size)
+        lst = sort_images.sort_info(args.PATH[:-1], [])
+        # Create directory, throw error if file with same name exists
+        try:
+            Path(args.PATH[-1]).mkdir(parents=True, exist_ok=True)
+        except FileExistsError as error:
+            sys.exit(error)
 
+    if args.include and args.exclude:
+        print("error: either use -i/--include or -e/--exclude", file=sys.stderr)
+        sys.exit(errno.EINVAL)  # Invalid argument error
+    elif args.include or args.exclude:
+        size_opts: str = args.include if args.include else args.exclude
+        lst = sort_images.filter_size(lst, bool(args.include), size_opts)
 
-def _check_error(length: int, summary: bool, size_limit: Tuple) -> bool:
-    """
-    Check whether there's enough argument passed for processing image sort
-    also check if there's conflicting argument being passed
-    """
-    # Require at least 2 position arguments if -d is False
-    if not summary and length < 2:
-        sys.exit("Please indicates both SRC and DEST directories")
-    # Either args.include or args.exclude, can't have both
-    if size_limit[0] and size_limit[1]:
-        sys.exit("Either --include or --exclude option, cannot have both.")
-    return True
+    if args.minimum:
+        lst = sort_images.filter_minimum(lst, args.minimum)
 
+    if args.summary:
+        for node in lst:
+            print(node)
+    else:
+        sort_images.sort_execute(lst, args.PATH[-1], args.copy)
 
-def _print_screen(image_info: ImageInfo, more: int):
-    """
-    print ImageInfo on_screen depends on whether more is True or
-    False (0, negative or None)
-    """
-    # if --more option is flaged
-    if not more:
-        image_info.to_string()
-    # otherwise print on-screen only if image total is more than
-    # the said flag
-    elif more < image_info.get_num():
-        image_info.to_string()
+    sys.exit(os.EX_OK)
 
 
 if __name__ == "__main__":
