@@ -10,7 +10,7 @@ from image_info import ImageInfo
 import os
 from pathlib import Path
 import errno
-
+import tomllib
 
 def main():
     """
@@ -22,6 +22,13 @@ def main():
     it will change list depends on function and what command options is enabled.
     """
     parser: argparse.ArgumentParser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="version",
+        version='%(prog)s 1.2.0'
+    )
+
     # Add positional arguments
     parser.add_argument(
         "PATH",
