@@ -92,13 +92,13 @@ def main():
         lst = sort_images.filter_size(lst, bool(args.include), size_opts)
 
     if args.minimum:
-        sort_images.filter_minimum(lst, args.minimum)
+        lst = sort_images.filter_minimum(lst, args.minimum)
 
     if args.summary:
         for node in lst:
             print(node)
     else:
-        sort_images.sort_execute(lst, args.copy)
+        sort_images.sort_execute(lst, args.PATH[-1], args.copy)
 
     sys.exit(os.EX_OK)
 

@@ -8,6 +8,8 @@ from PIL import Image
 from image_info import ImageInfo
 import re
 import errno
+import shutil
+import pathlib
 
 
 def sort_info(file_paths: list[str], image_info: list[ImageInfo]) -> list[ImageInfo]:
@@ -58,9 +60,6 @@ def filter_size(
 
         new_lst: list[ImageInfo] = []  # Create a new list for filtered node
 
-        # Cycle through each element
-        # if is_include is true, append the element from current list to new_lst
-        # if is_include is false, remove the element from current list
         for node in image_info:
             if is_include:
                 if (node.width, node.height) in pair:
@@ -68,7 +67,6 @@ def filter_size(
             elif (node.width, node.height) not in pair:
                 new_lst.append(node)
 
-        # Return new_lst if it is not empty, otherwise return image_info
         return new_lst
     except TypeError as error:
         sys.exit(error)
@@ -82,20 +80,41 @@ def filter_size(
         sys.exit(errno.EINVAL)  # Invalid argument error
 
 
-def filter_minimum(image_info: list[ImageInfo], minimum: int):
+def filter_minimum(image_info: list[ImageInfo], minimum: int) -> list[ImageInfo]:
     """
-    Compare ImageInfo.num  to minimum:int on each node
-    If it is less than minimum, remove from list
+    Compare ImageInfo.num  to minimum: int on each node
+    If it is ImageInfo.num is equal or more than minimum, append to new list
     """
+    new_lst: list[ImageInfo] = []
     for node in image_info:
-        if node.num < minimum:
-            image_info.remove(node)
+        if node.num >= minimum:
+            new_lst.append(node)
 
-    return image_info
+    return new_lst
 
 
-def sort_execute(lst: list[ImageInfo], copy: bool):
-    pass
+def sort_execute(image_info: list[ImageInfo], destination: str, copy: bool) -> None:
+    """
+    Move or copy file to destination,
+    depending to whether copy: bool is true or false.
+    """
+    # Create directory destination
+    try:
+        pathlib.Path(destination).mkdir(parents=True, exist_ok=True)
+    except FileExistsError as error:
+        sys.exit(error)
+
+    # Cycle through paths: list[str] within each node
+    # Move or copy file to destination
+    for node in image_info:
+        for path in node.paths:
+            try:
+                if copy:
+                    shutil.copy(path, destination)
+                else:
+                    shutil.move(path, destination)
+            except shutil.Error as error:
+                print(f"{error}", file=sys.stderr)
 
 
 # private function
