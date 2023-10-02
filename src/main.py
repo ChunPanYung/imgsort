@@ -91,6 +91,8 @@ def main():
 
     lst: list[ImageInfo] = []
 
+    # Check PATH length if args.summary is false.
+    # Attempt to create destination directory if PATH is greater than 2.
     if args.summary:
         lst = sort_images.sort_info(args.PATH[:], [])
     elif len(args.PATH[:]) < 2:
@@ -105,12 +107,13 @@ def main():
         except FileExistsError as error:
             sys.exit(error)
 
+    if args.minimum:
+        lst = sort_images.filter_minimum(lst, args.minimum)
+
+    # Sort by either include args or exclude args.
     if args.include or args.exclude:
         size_opts: str = args.include if args.include else args.exclude
         lst = sort_images.filter_size(lst, bool(args.include), size_opts)
-
-    if args.minimum:
-        lst = sort_images.filter_minimum(lst, args.minimum)
 
     # Last action: either summary or exeucte sorting
     if args.summary:
