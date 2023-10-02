@@ -10,7 +10,6 @@ from image_info import ImageInfo
 import os
 from pathlib import Path
 import errno
-import tomllib
 
 def main():
     """
