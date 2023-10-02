@@ -1,3 +1,9 @@
+## [unreleased]
+
+### Miscellaneous Tasks
+
+- Specify body format on changelog.
+
 ## [1.3.0] - 2023-10-02
 
 ### Features
