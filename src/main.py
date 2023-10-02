@@ -20,7 +20,7 @@ def main():
     Each function corresponds to one or more argument options,
     it will change list depends on function and what command options is enabled.
     """
-    parser: argparse.ArgumentParser = argparse.ArgumentParser()
+    parser: argparse.ArgumentParser = argparse.ArgumentParser(prog='imgsort')
     parser.add_argument(
         "-v",
         "--version",
