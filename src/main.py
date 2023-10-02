@@ -54,31 +54,34 @@ def main():
         type=str,
         help="Sorting only certain size indicated by this option.",
     )
-    parser.add_argument(
+
+    # Only allow one argument option from below.
+    group: argparse.ArgumentParser = parser.add_mutually_exclusive_group()
+    group.add_argument(
         "-e",
         "--exclude",
         action="store",
         type=str,
         help="Exclude certain image size indicated by this option.",
     )
-    parser.add_argument(
+    group.add_argument(
         "-m",
         "--minimum",
         action="store",
         type=int,
         help="Sort only if same size images are at least minimal number given.",
     )
-    parser.add_argument(
+    group.add_argument(
         "--landscape",
         action="store_true",
         help="Select image where its width is greater than height."
     )
-    parser.add_argument(
+    group.add_argument(
         "--portrait",
         action="store_true",
         help="Select image where its height is greater than width."
     )
-    parser.add_argument(
+    group.add_argument(
         "--square",
         action="store_true",
         help="Select image where its height and width are same length."
@@ -102,10 +105,7 @@ def main():
         except FileExistsError as error:
             sys.exit(error)
 
-    if args.include and args.exclude:
-        print("error: either use -i/--include or -e/--exclude", file=sys.stderr)
-        sys.exit(errno.EINVAL)  # Invalid argument error
-    elif args.include or args.exclude:
+    if args.include or args.exclude:
         size_opts: str = args.include if args.include else args.exclude
         lst = sort_images.filter_size(lst, bool(args.include), size_opts)
 
