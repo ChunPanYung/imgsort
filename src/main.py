@@ -68,6 +68,21 @@ def main():
         type=int,
         help="Sort only if same size images are at least minimal number given.",
     )
+    parser.add_argument(
+        "--landscape",
+        action="store_true",
+        help="Select image where its width is greater than height."
+    )
+    parser.add_argument(
+        "--portrait",
+        action="store_true",
+        help="Select image where its height is greater than width."
+    )
+    parser.add_argument(
+        "--square",
+        action="store_true",
+        help="Select image where its height and width are same length."
+    )
 
     args: argparse.Namespace = parser.parse_args()
 
@@ -97,6 +112,7 @@ def main():
     if args.minimum:
         lst = sort_images.filter_minimum(lst, args.minimum)
 
+    # Last action: either summary or exeucte sorting
     if args.summary:
         for node in lst:
             print(node)
