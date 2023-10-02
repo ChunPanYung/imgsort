@@ -33,9 +33,3 @@ pyinstaller = ">=5.13.0"
 pythonpath = [
   "src"
 ]
-
-[tool.git-cliff.changelog]
-# Default: https://github.com/orhun/git-cliff/blob/main/config/cliff.toml
-postprocessors = [
-  { pattern = " +", replace = " " } # Replace multiple spaces with single space.
-]
