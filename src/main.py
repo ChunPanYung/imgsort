@@ -9,7 +9,6 @@ import sort_images
 from image_info import ImageInfo
 import os
 from pathlib import Path
-import errno
 
 def main():
     """
@@ -109,6 +108,12 @@ def main():
 
     if args.minimum:
         lst = sort_images.filter_minimum(lst, args.minimum)
+
+    # Execute if one of arguments is true: square, landscape, and portrait.
+    if args.square or args.landscape or args.portrait:
+        # Do not need to pass args.square -- args.square is implicitly true
+        # if both args.landscape and args.portrait are false.
+        lst = sort_images.filter_preset(lst, args.landscape, args.portrait)
 
     # Sort by either include args or exclude args.
     if args.include or args.exclude:

@@ -80,6 +80,30 @@ def filter_size(
         sys.exit(errno.EINVAL)  # Invalid argument error
 
 
+def filter_preset(image_info: list[ImageInfo], landscape: bool, portrait: bool):
+    """
+    Sort images by one of following: square size, portrait size, or lanscape size.
+    This functions handle 3 arguments: landscape, portrait and square.
+    If both landscape and portrait are false, square is implicitly true.
+    """
+    new_lst: list[ImageInfo] = []
+
+    if landscape:
+        for node in image_info:
+            if node.width > node.height:
+                new_lst.append(node)
+    elif portrait:
+        for node in image_info:
+            if node.height > node.width:
+                new_lst.append(node)
+    else:
+        for node in image_info:
+            if node.height == node.width:
+                new_lst.append(node)
+
+    return new_lst
+
+
 def filter_minimum(image_info: list[ImageInfo], minimum: int) -> list[ImageInfo]:
     """
     Compare ImageInfo.num  to minimum: int on each node
