@@ -60,12 +60,16 @@ def filter_size(
 
         new_lst: list[ImageInfo] = []  # Create a new list for filtered node
 
-        for node in image_info:
-            if is_include:
+        # Sort by size options if args.include is true.
+        # Otherwise args.exclude is implicitly true and sort by excluding size options.
+        if is_include:
+            for node in image_info:
                 if (node.width, node.height) in pair:
                     new_lst.append(node)
-            elif (node.width, node.height) not in pair:
-                new_lst.append(node)
+        else:
+            for node in image_info:
+                if (node.width, node.height) not in pair:
+                    new_lst.append(node)
 
         return new_lst
     except TypeError as error:
@@ -78,6 +82,30 @@ def filter_size(
         )
         print(msg, file=sys.stderr)
         sys.exit(errno.EINVAL)  # Invalid argument error
+
+
+def filter_preset(image_info: list[ImageInfo], landscape: bool, portrait: bool):
+    """
+    Sort images by one of following: square size, portrait size, or lanscape size.
+    This functions handle 3 arguments: landscape, portrait and square.
+    If both landscape and portrait are false, square is implicitly true.
+    """
+    new_lst: list[ImageInfo] = []
+
+    if landscape:
+        for node in image_info:
+            if node.width > node.height:
+                new_lst.append(node)
+    elif portrait:
+        for node in image_info:
+            if node.height > node.width:
+                new_lst.append(node)
+    else:
+        for node in image_info:
+            if node.height == node.width:
+                new_lst.append(node)
+
+    return new_lst
 
 
 def filter_minimum(image_info: list[ImageInfo], minimum: int) -> list[ImageInfo]:

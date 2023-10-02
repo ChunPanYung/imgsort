@@ -9,8 +9,6 @@ import sort_images
 from image_info import ImageInfo
 import os
 from pathlib import Path
-import errno
-import tomllib
 
 def main():
     """
@@ -21,12 +19,12 @@ def main():
     Each function corresponds to one or more argument options,
     it will change list depends on function and what command options is enabled.
     """
-    parser: argparse.ArgumentParser = argparse.ArgumentParser()
+    parser: argparse.ArgumentParser = argparse.ArgumentParser(prog='imgsort')
     parser.add_argument(
         "-v",
         "--version",
         action="version",
-        version='%(prog)s 1.2.0'
+        version='%(prog)s 1.3.0'
     )
 
     # Add positional arguments
@@ -55,25 +53,45 @@ def main():
         type=str,
         help="Sorting only certain size indicated by this option.",
     )
-    parser.add_argument(
+
+    # Only allow one argument option from below.
+    group: argparse.ArgumentParser = parser.add_mutually_exclusive_group()
+    group.add_argument(
         "-e",
         "--exclude",
         action="store",
         type=str,
         help="Exclude certain image size indicated by this option.",
     )
-    parser.add_argument(
+    group.add_argument(
         "-m",
         "--minimum",
         action="store",
         type=int,
         help="Sort only if same size images are at least minimal number given.",
     )
+    group.add_argument(
+        "--landscape",
+        action="store_true",
+        help="Select image where its width is greater than height."
+    )
+    group.add_argument(
+        "--portrait",
+        action="store_true",
+        help="Select image where its height is greater than width."
+    )
+    group.add_argument(
+        "--square",
+        action="store_true",
+        help="Select image where its height and width are same length."
+    )
 
     args: argparse.Namespace = parser.parse_args()
 
     lst: list[ImageInfo] = []
 
+    # Check PATH length if args.summary is false.
+    # Attempt to create destination directory if PATH is greater than 2.
     if args.summary:
         lst = sort_images.sort_info(args.PATH[:], [])
     elif len(args.PATH[:]) < 2:
@@ -88,16 +106,21 @@ def main():
         except FileExistsError as error:
             sys.exit(error)
 
-    if args.include and args.exclude:
-        print("error: either use -i/--include or -e/--exclude", file=sys.stderr)
-        sys.exit(errno.EINVAL)  # Invalid argument error
-    elif args.include or args.exclude:
-        size_opts: str = args.include if args.include else args.exclude
-        lst = sort_images.filter_size(lst, bool(args.include), size_opts)
-
     if args.minimum:
         lst = sort_images.filter_minimum(lst, args.minimum)
 
+    # Execute if one of arguments is true: square, landscape, and portrait.
+    if args.square or args.landscape or args.portrait:
+        # Do not need to pass args.square -- args.square is implicitly true
+        # if both args.landscape and args.portrait are false.
+        lst = sort_images.filter_preset(lst, args.landscape, args.portrait)
+
+    # Sort by either include args or exclude args.
+    if args.include or args.exclude:
+        size_opts: str = args.include if args.include else args.exclude
+        lst = sort_images.filter_size(lst, bool(args.include), size_opts)
+
+    # Last action: either summary or exeucte sorting
     if args.summary:
         for node in lst:
             print(node)
