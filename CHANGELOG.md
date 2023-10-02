@@ -1,7 +1,3 @@
-# Changelog
-
-All notable changes to this project will be documented in this file.
-
 ## [1.3.0] - 2023-10-02
 
 ### Features
@@ -14,6 +10,8 @@ All notable changes to this project will be documented in this file.
 
 - Set the next release version.
 - Specify program name.
+- Git-cliff configuration into its own file.
+- Add commit for skipping changelog writing.
 
 ### Refactor
 
