@@ -1,6 +1,7 @@
 ---
 # vim: filetype=yaml
 name: Automatically generate a git-cliff changelog
+'on': ["push"]
 jobs:
   changelog:
     name: Generate changelog
